@@ -12,3 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+install: 
+	./scripts/install-go-dependecies.sh
+
+verify: verify-git verify-go-mod verify-build verify-lint verify-test-unit
+
+verify-build:
+	./scripts/verify-build.sh
+
+verify-lint:
+	./scripts/verify-golangci-lint.sh
+
+verify-test-unit:
+	./scripts/verify-test-go.sh
+
+verify-go-mod:
+	./scripts/verify-go-mod.sh
+
+verify-git:
+	./scripts/verify-git.sh
+
+build:
+	echo "TODO: build go binaries"
+	echo "TODO: compile protobuf API code"

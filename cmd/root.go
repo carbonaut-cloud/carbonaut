@@ -15,35 +15,47 @@
 package cmd
 
 import (
+	"carbonaut.cloud/carbonaut/pkg/util"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
 
+var cfg *Config
+
 var rootCmd = &cobra.Command{
 	Use:   "carbonaut",
-	Short: "Run commands against your Carbonaut deployments",
-	Long:  "CarbonCtl controls your Carbonaut deployments like the main carbonaut pod, the cloud-connector, dashboards, databases and other components",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		logger, _ := zap.NewProduction()
-		defer logger.Sync()
-		cfg := Config{
-			log: logger.Sugar(),
+	Short: "Run carbonaut commands",
+	Long:  "TBD",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		logger, err := util.GetDefaultZapCfg().Build()
+		if err != nil {
+			return err
 		}
-		return Run(&cfg)
+		cfg = &Config{
+			logger: logger.Sugar(),
+		}
+		return nil
+	},
+	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+		return cfg.logger.Sync()
 	},
 }
 
+func init() {
+	rootCmd.AddCommand(dataCmd)
+	dataCmd.AddCommand(dataExportCmd)
+	dataCmd.AddCommand(dataImportCmd)
+	dataCmd.AddCommand(dataReportCmd)
+
+	rootCmd.AddCommand(deployCmd)
+	deployCmd.AddCommand(deployDescribeCmd)
+}
+
 type Config struct {
-	log *zap.SugaredLogger
+	logger *zap.SugaredLogger
 }
 
 // Execute executes the ci-reporter root command.
 func Execute() error {
 	return rootCmd.Execute()
-}
-
-// Run executes the main logic
-func Run(cfg *Config) error {
-	cfg.log.Info("Run root carbonaut command")
-	return nil
 }
