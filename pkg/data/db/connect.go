@@ -22,11 +22,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type InDbConnection struct {
+type InDBConnection struct {
 	DatabaseFileName string
 }
 
 //  TODO: connect to database
-func Connect(in *InDbConnection, log *zap.SugaredLogger) (*gorm.DB, error) {
+func Connect(in *InDBConnection, log *zap.SugaredLogger) (*gorm.DB, error) {
 	return gorm.Open(sqlite.Open(in.DatabaseFileName), &gorm.Config{})
 }

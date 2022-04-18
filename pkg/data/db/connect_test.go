@@ -26,7 +26,7 @@ func TestDataExporterNeg(t *testing.T) {
 	defer func() {
 		err = logger.Sync()
 	}()
-	dbConnection, err := Connect(&InDbConnection{
+	dbConnection, err := Connect(&InDBConnection{
 		DatabaseFileName: "emptytest.db",
 	}, logger.Sugar())
 	assert.NoError(t, err)
