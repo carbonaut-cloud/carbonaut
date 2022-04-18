@@ -14,8 +14,17 @@
 
 package main
 
-import "fmt"
+import (
+	"carbonaut.cloud/carbonaut/cmd"
+	"carbonaut.cloud/carbonaut/pkg/util"
+)
 
 func main() {
-	fmt.Println("Hello carbonaut!!")
+	if err := cmd.Execute(); err != nil {
+		logger, err := util.GetDefaultZapCfg().Build()
+		defer func() {
+			err = logger.Sync()
+		}()
+		logger.Sugar().Fatal(err)
+	}
 }
