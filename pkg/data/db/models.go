@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package data
+package db
 
-import "gorm.io/gorm"
-
-//  TODO: define data models
-
-// Product INFO: dummy model
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
+// Emissions TODO: define data models
+type Emissions struct {
+	ID            uint    `gorm:"primarykey" json:"id"`
+	ResourceName  string  `gorm:"column:resource_name" json:"resource_name"`
+	ResourceOwner string  `gorm:"column:resource_owner" json:"resource_owner"`
+	MTCO2e        float32 `gorm:"column:mtco2e" json:"mtco2e"`
 }
