@@ -12,6 +12,3 @@ Remember, an issue is not the place to ask questions. You can use Carbonaut Slac
 ## What is needed:
 
 ## Why it is needed:
-
-## Effort estimation:
-
