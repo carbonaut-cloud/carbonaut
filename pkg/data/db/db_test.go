@@ -32,7 +32,6 @@ import (
 )
 
 func TestConnectToSQLite(t *testing.T) {
-	// 1. set up test env
 	sourceFile := "emptytest.db"
 	destinationFile := "emptytest2.db"
 	// copy file from source to target destination, clean testing file
@@ -41,28 +40,24 @@ func TestConnectToSQLite(t *testing.T) {
 	err = ioutil.WriteFile(destinationFile, input, 0o600)
 	assert.NoError(t, err)
 
-	// 2. test
 	db, err := ConnectToSQLite(&SQLiteConfig{
 		DatabaseFileName: destinationFile,
 	})
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
-
 	assert.NoError(t, db.Migrate())
-
-	// 3. clean up test file
 	assert.NoError(t, os.Remove(destinationFile))
 }
 
 // CarbonDBTestSuite is used for testing with mocks
 type CarbonDBTestSuite struct {
 	suite.Suite
-	DB   *gorm.DB
-	mock sqlmock.Sqlmock
-
+	DB          *gorm.DB
+	mock        sqlmock.Sqlmock
 	carbonautDB ICarbonDB
 }
 
+// TestCarbonDB runs the entire 'CarbonDBTestSuite' test suite
 func TestCarbonDB(t *testing.T) {
 	suite.Run(t, new(CarbonDBTestSuite))
 }
@@ -89,7 +84,7 @@ func (s *CarbonDBTestSuite) AfterTest(_, _ string) {
 	require.NoError(s.T(), s.mock.ExpectationsWereMet())
 }
 
-// test Get(id uint) (*Emissions, error)
+// mock test: Get(id uint) (*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBGet() {
 	e := Emissions{
 		ID:            1,
@@ -109,7 +104,7 @@ func (s *CarbonDBTestSuite) TestCarbonDBGet() {
 	require.Nil(s.T(), deep.Equal(&e, res))
 }
 
-// Delete(id uint) error
+// mock test: Delete(id uint) error
 func (s *CarbonDBTestSuite) TestCarbonDBDelete() {
 	e := Emissions{
 		ID:            1,
@@ -125,7 +120,7 @@ func (s *CarbonDBTestSuite) TestCarbonDBDelete() {
 	require.NoError(s.T(), err)
 }
 
-// Test func: List(offset, limit int) ([]*Emissions, error)
+// mock test: List(offset, limit int) ([]*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBList() {
 	e := Emissions{
 		ID:            1,
@@ -144,7 +139,7 @@ func (s *CarbonDBTestSuite) TestCarbonDBList() {
 	require.NoError(s.T(), err)
 }
 
-// Test func: Migrate() error
+// mock test: Migrate() error
 func (s *CarbonDBTestSuite) TestCarbonDBMigrate() {
 	s.mock.ExpectExec(regexp.QuoteMeta(
 		`SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = %1 AND table_type = %2`)).
@@ -157,7 +152,7 @@ func (s *CarbonDBTestSuite) TestCarbonDBMigrate() {
 	require.NoError(s.T(), err)
 }
 
-// SearchByResourceName(q string, offset, limit int) ([]*Emissions, error)
+// mock test: SearchByResourceName(q string, offset, limit int) ([]*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBSearchByResourceName() {
 	e := Emissions{
 		ID:            1,
@@ -173,7 +168,7 @@ func (s *CarbonDBTestSuite) TestCarbonDBSearchByResourceName() {
 	require.NoError(s.T(), err)
 }
 
-// Save(emissions *Emissions) error
+// mock test: Save(emissions *Emissions) error
 func (s *CarbonDBTestSuite) TestCarbonDBSave() {
 	e := Emissions{
 		ID:            1,
