@@ -15,8 +15,8 @@
 policy:
   approval:
     - or:
-        - one_approve
-        - policy_changes
+      - basic approval
+      - policy changes
 
 disapproval:
   if:
@@ -35,13 +35,13 @@ disapproval:
         github_review: true
 
 approval_rules:
-  - name: one_approve
+  - name: basic approval
     description: All folks from the carbonaut org can approve
     requires:
       count: 1
       organizations: ["carbonaut-cloud"]
 
-  - name: policy_changes
+  - name: policy changes
     description: Policy changes need to get approved by a maintainer
     if:
       only_changed_files:
