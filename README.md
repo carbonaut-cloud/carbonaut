@@ -27,7 +27,7 @@ However, to fulfill our mission we also want to:
 - [ ] Integrate with Kubernetes HPA/VPA/ClusterAutoscaler
 - [ ] Integrate with IaC tools to provide forecasts
 - [ ] Integration with hypervisor platforms
-- [ ] Integrate with baremetal meassurements
+- [ ] Integrate with baremetal measurements
 - [ ] Integrate with different power supply and energy mix datasets
 
 ## Getting Started
