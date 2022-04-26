@@ -50,3 +50,4 @@ approval_rules:
     requires:
       count: 1
       teams: ["carbonaut-cloud/maintainers"]
+
