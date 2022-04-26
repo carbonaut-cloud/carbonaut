@@ -27,7 +27,6 @@ disapproval:
   options:
     # "methods" defines how users set and revoke disapproval.
     methods:
-      # "disapprove" sets the methods for disapproval.
       disapprove:
         comments: ["/hold"]
         github_review: true
@@ -51,3 +50,4 @@ approval_rules:
     requires:
       count: 1
       teams: ["carbonaut-cloud/maintainers"]
+
