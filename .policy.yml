@@ -18,21 +18,21 @@ policy:
       - basic approval
       - policy changes
 
-disapproval:
-  if:
-    has_labels: ["hold/do-not-merge", "hold/missing-dco"]
-  # only carbonaut members can disapprove
-  requires:
-    organization: ["carbonaut-cloud"]
-  options:
-    # "methods" defines how users set and revoke disapproval.
-    methods:
-      disapprove:
-        comments: ["/hold"]
-        github_review: true
-      revoke:
-        comments: ["/lgtm"]
-        github_review: true
+  disapproval:
+    if:
+      has_labels: ["hold/do-not-merge"]
+    # only carbonaut members can disapprove
+    requires:
+      organizations: ["carbonaut-cloud"]
+    options:
+      # "methods" defines how users set and revoke disapproval.
+      methods:
+        disapprove:
+          comments: ["/hold"]
+          github_review: true
+        revoke:
+          comments: ["/lgtm"]
+          github_review: true
 
 approval_rules:
   - name: basic approval
@@ -50,4 +50,3 @@ approval_rules:
     requires:
       count: 1
       teams: ["carbonaut-cloud/maintainers"]
-
