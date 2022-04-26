@@ -15,7 +15,7 @@
 install: 
 	./scripts/install-go-dependecies.sh
 
-verify: verify-git verify-go-mod verify-build verify-lint verify-test-unit
+verify: verify-go-mod verify-build verify-lint verify-test-unit verify-git
 
 verify-build:
 	./scripts/verify-build.sh
