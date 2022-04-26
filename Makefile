@@ -15,7 +15,7 @@
 install: 
 	./scripts/install-go-dependecies.sh
 
-verify: verify-go-mod verify-build verify-lint verify-test-unit verify-git
+verify: verify-git verify-go-mod verify-build verify-lint verify-test-unit
 
 verify-build:
 	./scripts/verify-build.sh
@@ -35,3 +35,6 @@ verify-git:
 build:
 	echo "TODO: build go binaries"
 	echo "TODO: compile protobuf API code"
+
+update-go-dependecies:
+	go get -u all
