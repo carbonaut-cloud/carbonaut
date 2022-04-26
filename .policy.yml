@@ -15,16 +15,11 @@
 policy:
   approval:
     - or:
-        - one-approve
-        - policy-changes
+        - one_approve
+        - policy_changes
 
 disapproval:
   if:
-    # All predicates from the approval rules section are valid here
-    title:
-      not_matches:
-        - "^(fix|feat): (\\w| )+$"
-        - "^BREAKING CHANGE: (\\w| )+$"
     has_labels: ["hold/do-not-merge", "hold/missing-dco"]
   # only carbonaut members can disapprove
   requires:
@@ -34,22 +29,21 @@ disapproval:
     methods:
       # "disapprove" sets the methods for disapproval.
       disapprove:
+        comments: ["/hold"]
         github_review: true
       revoke:
         comments: ["/lgtm"]
         github_review: true
 
 approval_rules:
-  # all folks from the carbonaut org can approve
-  - name: one-approve
-    description: carbonaut org members can approve
+  - name: one_approve
+    description: All folks from the carbonaut org can approve
     requires:
       count: 1
       organizations: ["carbonaut-cloud"]
 
-  # If the .policy.yml changed a maintainer needs to approve the change
-  - name: policy-changes
-    description: devtools can approve changes to staging
+  - name: policy_changes
+    description: Policy changes need to get approved by a maintainer
     if:
       only_changed_files:
         paths:
