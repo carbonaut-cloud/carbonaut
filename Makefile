@@ -32,9 +32,5 @@ verify-go-mod:
 verify-git:
 	./scripts/verify-git.sh
 
-build:
-	echo "TODO: build go binaries"
-	echo "TODO: compile protobuf API code"
-
 update-go-dependecies:
 	go get -u all
