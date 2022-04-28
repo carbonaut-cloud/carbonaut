@@ -17,7 +17,9 @@ package db
 // A ORM library is used to connect to the database: see https://gorm.io/docs/
 
 import (
+	"errors"
 	"fmt"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -48,11 +50,20 @@ const (
 type DatabaseDriver string
 
 func ConnectToSQLite(cfg *SQLiteConfig) (ICarbonDB, error) {
+	if _, err := os.Stat(cfg.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
+	// open connection to db file
 	db, err := gorm.Open(sqlite.Open(cfg.DatabaseFileName), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	return carbonDB{db}, nil
+	// migrate tables
+	carbonDB := carbonDB{db}
+	if err = carbonDB.Migrate(); err != nil {
+		return nil, err
+	}
+	return carbonDB, nil
 }
 
 // Connect establishes a connection to the provided database configuration
@@ -63,6 +74,7 @@ func ConnectToSQLite(cfg *SQLiteConfig) (ICarbonDB, error) {
 // 3. enter password: test
 // Setting the same information in PostgresConfig to connect to the local hosted database
 func ConnectToPostgres(cfg *PostgresConfig) (ICarbonDB, error) {
+	// open connection to db
 	db, err := gorm.Open(postgres.Open(
 		fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
@@ -71,7 +83,12 @@ func ConnectToPostgres(cfg *PostgresConfig) (ICarbonDB, error) {
 	if err != nil {
 		return nil, err
 	}
-	return carbonDB{db}, nil
+	// migrate tables
+	carbonDB := carbonDB{db}
+	if err = carbonDB.Migrate(); err != nil {
+		return nil, err
+	}
+	return carbonDB, nil
 }
 
 type ICarbonDB interface {

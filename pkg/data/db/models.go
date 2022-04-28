@@ -14,10 +14,12 @@
 
 package db
 
-// Emissions TODO: define data models
+// Emissions define data models
 type Emissions struct {
 	ID            uint    `gorm:"primarykey" json:"id"`
 	ResourceName  string  `gorm:"column:resource_name" json:"resource_name"`
 	ResourceOwner string  `gorm:"column:resource_owner" json:"resource_owner"`
+	ResourceType  string  `gorm:"column:resource_type" json:"resource_type"`
+	Provider      string  `gorm:"column:provider" json:"provider"`
 	MTCO2e        float32 `gorm:"column:mtco2e" json:"mtco2e"`
 }

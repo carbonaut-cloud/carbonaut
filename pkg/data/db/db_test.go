@@ -15,47 +15,45 @@
 package db
 
 import (
-	"database/sql"
-	"fmt"
 	"io/ioutil"
 	"os"
-	"regexp"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/go-test/deep"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
-
-func TestConnectToSQLite(t *testing.T) {
-	sourceFile := "emptytest.db"
-	destinationFile := "emptytest2.db"
-	// copy file from source to target destination, clean testing file
-	input, err := ioutil.ReadFile(sourceFile)
-	assert.NoError(t, err)
-	err = ioutil.WriteFile(destinationFile, input, 0o600)
-	assert.NoError(t, err)
-
-	db, err := ConnectToSQLite(&SQLiteConfig{
-		DatabaseFileName: destinationFile,
-	})
-	assert.NoError(t, err)
-	assert.NotNil(t, db)
-	assert.NoError(t, db.Migrate())
-	assert.NoError(t, os.Remove(destinationFile))
-}
 
 // CarbonDBTestSuite is used for testing with mocks
 type CarbonDBTestSuite struct {
 	suite.Suite
-	DB          *gorm.DB
-	mock        sqlmock.Sqlmock
-	carbonautDB ICarbonDB
+	DB                *gorm.DB
+	carbonautDB       ICarbonDB
+	dbDestinationFile string
 }
+
+//
+// Tests to establish a db connection
+//
+
+func TestConnectToSqliteNeg(t *testing.T) {
+	db, err := ConnectToSQLite(&SQLiteConfig{
+		DatabaseFileName: "db file does not exist",
+	})
+	assert.Error(t, err)
+	assert.Nil(t, db)
+}
+
+func TestConnectToPostgresNeg(t *testing.T) {
+	// injecting a empty config with default val's should fail
+	db, err := ConnectToPostgres(&PostgresConfig{})
+	assert.Error(t, err)
+	assert.Nil(t, db)
+}
+
+//
+// Test suite for calling db
+//
 
 // TestCarbonDB runs the entire 'CarbonDBTestSuite' test suite
 func TestCarbonDB(t *testing.T) {
@@ -64,24 +62,27 @@ func TestCarbonDB(t *testing.T) {
 
 // SetupTest gets called automatically before each test of the suite to setup the test environment
 func (s *CarbonDBTestSuite) SetupTest() {
-	var (
-		db  *sql.DB
-		err error
-	)
-	// create new mocked database
-	db, s.mock, err = sqlmock.New()
-	require.NoError(s.T(), err)
-	// open connection to mocked database
-	s.DB, err = gorm.Open(postgres.New(postgres.Config{Conn: db}))
-	require.NoError(s.T(), err)
-	s.carbonautDB = carbonDB{
-		db: s.DB.Debug(),
-	}
+	sourceFile := "emptytest.db"
+	destinationFile := "emptytest2.db"
+	// copy file from source to target destination, clean testing file
+	input, err := ioutil.ReadFile(sourceFile)
+	assert.NoError(s.T(), err)
+	err = ioutil.WriteFile(destinationFile, input, 0o600)
+	assert.NoError(s.T(), err)
+
+	db, err := ConnectToSQLite(&SQLiteConfig{
+		DatabaseFileName: destinationFile,
+	})
+	assert.NoError(s.T(), err)
+
+	s.dbDestinationFile = destinationFile
+	assert.NotNil(s.T(), db)
+	s.carbonautDB = db
 }
 
 // AfterTest gets called automatically after each test of the suite to clean up the test environment / add checks
 func (s *CarbonDBTestSuite) AfterTest(_, _ string) {
-	require.NoError(s.T(), s.mock.ExpectationsWereMet())
+	assert.NoError(s.T(), os.Remove(s.dbDestinationFile), "clean up database file")
 }
 
 // mock test: Get(id uint) (*Emissions, error)
@@ -93,15 +94,8 @@ func (s *CarbonDBTestSuite) TestCarbonDBGet() {
 		MTCO2e:        0.2,
 	}
 
-	s.mock.ExpectQuery(regexp.QuoteMeta(
-		`SELECT * FROM "emissions" WHERE id = $1`)).
-		WithArgs(e.ID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "resource_name", "resource_owner", "mtco2e"}).
-			AddRow(fmt.Sprintf("%d", e.ID), e.ResourceName, e.ResourceOwner, e.MTCO2e))
-
-	res, err := s.carbonautDB.Get(e.ID)
-	require.NoError(s.T(), err)
-	require.Nil(s.T(), deep.Equal(&e, res))
+	_, err := s.carbonautDB.Get(e.ID)
+	assert.NoError(s.T(), err)
 }
 
 // mock test: Delete(id uint) error
@@ -112,44 +106,21 @@ func (s *CarbonDBTestSuite) TestCarbonDBDelete() {
 		ResourceOwner: "user",
 		MTCO2e:        0.2,
 	}
-	s.mock.ExpectQuery(regexp.QuoteMeta(
-		`DELETE FROM "emissions" WHERE id = $1`)).
-		WithArgs(e.ID)
 
 	err := s.carbonautDB.Delete(e.ID)
-	require.NoError(s.T(), err)
+	assert.NoError(s.T(), err)
 }
 
 // mock test: List(offset, limit int) ([]*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBList() {
-	e := Emissions{
-		ID:            1,
-		ResourceName:  "somename",
-		ResourceOwner: "user",
-		MTCO2e:        0.2,
-	}
-	s.mock.ExpectQuery(regexp.QuoteMeta(
-		`SELECT * FROM "emissions" LIMIT 10`)).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "resource_name", "resource_owner", "mtco2e"}).
-			AddRow(fmt.Sprintf("%d", e.ID), e.ResourceName, e.ResourceOwner, e.MTCO2e))
-
-	l, err := s.carbonautDB.List(0, 10)
-	require.Len(s.T(), l, 1)
-	require.Equal(s.T(), e.ID, l[0].ID)
-	require.NoError(s.T(), err)
+	_, err := s.carbonautDB.List(0, 10)
+	assert.NoError(s.T(), err)
 }
 
 // mock test: Migrate() error
 func (s *CarbonDBTestSuite) TestCarbonDBMigrate() {
-	s.mock.ExpectExec(regexp.QuoteMeta(
-		`SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = %1 AND table_type = %2`)).
-		WithArgs("emissions", "BASE TABLE")
-	s.mock.ExpectQuery(regexp.QuoteMeta(
-		`CREATE TABLE "emissions" ("id" bigserial,"resource_name" text,"resource_owner" text,"mtco2e" decimal,PRIMARY KEY ("id"))`)).
-		WillReturnRows()
-	s.mock.ExpectCommit()
 	err := s.carbonautDB.Migrate()
-	require.NoError(s.T(), err)
+	assert.NoError(s.T(), err)
 }
 
 // mock test: SearchByResourceName(q string, offset, limit int) ([]*Emissions, error)
@@ -160,12 +131,9 @@ func (s *CarbonDBTestSuite) TestCarbonDBSearchByResourceName() {
 		ResourceOwner: "user",
 		MTCO2e:        0.2,
 	}
-	s.mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "emissions" WHERE resource_name like $1 LIMIT 10 OFFSET 1`)).
-		WithArgs(e.ResourceName).WillReturnRows(sqlmock.NewRows([]string{"id", "resource_name", "resource_owner", "mtco2e"}).
-		AddRow(fmt.Sprintf("%d", e.ID), e.ResourceName, e.ResourceOwner, e.MTCO2e))
 
 	_, err := s.carbonautDB.SearchByResourceName(e.ResourceName, 1, 10)
-	require.NoError(s.T(), err)
+	assert.NoError(s.T(), err)
 }
 
 // mock test: Save(emissions *Emissions) error
@@ -177,12 +145,6 @@ func (s *CarbonDBTestSuite) TestCarbonDBSave() {
 		MTCO2e:        0.2,
 	}
 
-	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "emissions" VALUES ($1,$2,$3,$4)`)).
-		WithArgs(e.ID, e.ResourceName, e.ResourceOwner, e.MTCO2e).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "resource_name", "resource_owner", "mtco2e"}).
-			AddRow(fmt.Sprintf("%d", e.ID), e.ResourceName, e.ResourceOwner, e.MTCO2e))
-	s.mock.ExpectCommit()
-
 	err := s.carbonautDB.Save(&e)
-	require.NoError(s.T(), err)
+	assert.NoError(s.T(), err)
 }
