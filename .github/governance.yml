@@ -1,0 +1,169 @@
+version: v1
+
+#
+# ISSUE COMMANDS
+#
+issue:
+  labels:
+    - prefix: triage
+      list: [ "accepted" ]
+      multiple: false
+      author_association:
+        collaborator: true
+        member: true
+        owner: true
+      needs:
+        comment: |
+          @$AUTHOR: This issue is currently awaiting triage.
+
+          The triage accepted label can be added by org members by writing `/triage accepted` in a comment.
+
+    - prefix: kind
+      list: [ "feature", "doc", "bug-fix", "bug", "governance", "clean-up", "epic" ]
+      needs:
+        comment: |
+          @$AUTHOR: There are no 'kind' label on this issue. Please specify a 'kind' label, thank you!
+
+          * `/kind feature`
+          * `/kind doc`
+          * `/kind bug`
+          * `/kind bug-fix`
+          * `/kind governance`
+          * `/kind clean-up`
+          * `/kind epic`
+
+    - prefix: priority
+      multiple: false
+      list: [ "critical-urgent", "urgent", "important-soon", "long-term" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - prefix: warning
+      list: [ "breaking-change" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+  chat_ops:
+    - cmd: /close
+      type: close
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /cc
+      type: none # does not trigger anything
+
+    - cmd: /assign
+      type: assign
+      author_association:
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /help
+      type: label
+      label:
+        add: help wanted
+
+    - cmd: /duplicate
+      type: label
+      label:
+        add: duplicate
+      author_association:
+        collaborator: true
+        member: true
+        owner: true
+#
+# PULL REQUEST COMMANDS
+#
+pull_request:
+  labels:
+    - prefix: kind
+      list: [ "feature", "doc", "bug-fix", "bug", "governance", "clean-up" ]
+      multiple: false
+      needs:
+        comment: |
+          @$AUTHOR: There are no 'kind' label on this PR. Please specify a 'kind' label, thank you!
+
+          * `/kind feature`
+          * `/kind doc`
+          * `/kind bug`
+          * `/kind bug-fix`
+          * `/kind governance`
+          * `/kind clean-up`
+
+    - prefix: priority
+      multiple: false
+      list: [ "critical-urgent", "urgent", "important-soon", "long-term" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - prefix: merge
+      multiple: false
+      list: [ "squash", "rebase" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+  chat_ops:
+    - cmd: /close
+      type: close
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /cc
+      type: review
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /assign
+      type: assign
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /lgtm
+      type: label
+      label:
+        add: /lgtm
+      author_association:
+        member: true
+        owner: true
+
+    - cmd: /hold
+      type: label
+      label:
+        add: hold/do-not-merge
+        remove: [ 'lgtm' ]
+      author_association:
+        member: true
+        owner: true
+
+    - prefix: warning
+      list: [ "breaking-change" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
