@@ -95,8 +95,7 @@ func getFileConfiguration(in *FileMediumConfig) (*CarbonConfig, error) {
 	}
 
 	carbonConfig := CarbonConfig{}
-	err := viper.Unmarshal(&carbonConfig)
-	if err != nil {
+	if err := viper.Unmarshal(&carbonConfig); err != nil {
 		return nil, fmt.Errorf("unable to decode into struct, %v", err)
 	}
 
