@@ -1,29 +1,26 @@
-## Proposed changes
+### Proposed changes
 
 <!-- 
 Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. If it fixes a bug or resolves a feature request, be sure to link to that issue. 
 -->
 
-_add a description here_
-
-## Types of changes
+### Types of changes
 
 What types of changes does your code introduce to Carbonaut?
-<!-- Put an `x` in the boxes that apply and remove this comment afterwards.
 
-Example: The PR adds a new feature, copy the line '- [ ] New feature (...)' outside of this comment and check the box with an `x`.
+<!--
+/kind feature
+/kind doc
+/kind bug
+/kind bug-fix
+/kind governance
+/kind clean-up
 
-
-- [ ] Bugfix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (major fix or feature that breaks previous functionality of carbonaut)
-- [ ] Documentation
-- [ ] Project governance (if none of the other choices apply)
+If multiple apply elaborate why multiple labels apply, thank you!
 -->
 
-<!-- Please apply labels accordingly (`kind/bug-fix`, `kind/...`) :) -->
 
-## Checklist
+### Checklist
 
 <!-- Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask :). This is simply a reminder of what we are going to look for before merging code. -->
 
@@ -37,36 +34,19 @@ _All boxes should be checked before the PR gets merged_
 
 #### Which issue(s) this PR fixes:
 
-<!--
-Automatically closes linked issue when PR is merged.
-`Fixes #<issue number>`, or `Fixes (paste link of issue)`.
--->
-
 Fixes #
 
 or
 
 `None`
 
-## Does this PR introduce a user-facing change?
-
-<!--
-If yes, replace `NONE` and elaborate each change in one sentence.
-
-Example:
-```
-The carbonaut dashboard KPI 'emissions by resource' can be filtered by 'resource owner'
--->
-
-```
-NONE
-```
-
 ## Comments
 
 <!-- 
 Please don't hesitate to use this section! 
 It is often a good idea to reference other issues, provide context or elaborate other options you explored...
+
+You can ask for reviews with /cc <github username>
 -->
 
-`NONE`
+`None`

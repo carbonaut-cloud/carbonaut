@@ -1,0 +1,23 @@
+name: Generic Request Issue
+description: Use this template if your request if the other templates don't fit
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: What would you like to be added?
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why is this needed?
+    validations:
+      required: true
+  
+  - type: textarea
+    id: kind
+    attributes:
+      label: Relevant Kind label(s)
+      description: Please specify a kind label so we can identify your request easier kind feature|bug|epic|doc|clean-up|bug-fix|governance
+      value: /kind
