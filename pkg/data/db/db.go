@@ -60,7 +60,7 @@ func ConnectToSQLite(cfg *SQLiteConfig) (ICarbonDB, error) {
 	}
 	// migrate tables
 	carbonDB := carbonDB{db}
-	if err = carbonDB.Migrate(); err != nil {
+	if err := carbonDB.Migrate(); err != nil {
 		return nil, err
 	}
 	return carbonDB, nil
@@ -85,7 +85,7 @@ func ConnectToPostgres(cfg *PostgresConfig) (ICarbonDB, error) {
 	}
 	// migrate tables
 	carbonDB := carbonDB{db}
-	if err = carbonDB.Migrate(); err != nil {
+	if err := carbonDB.Migrate(); err != nil {
 		return nil, err
 	}
 	return carbonDB, nil

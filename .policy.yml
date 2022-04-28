@@ -1,0 +1,52 @@
+# Copyright 2022 The Carbonaut Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+policy:
+  approval:
+    - or:
+      - basic approval
+      - policy changes
+
+  disapproval:
+    if:
+      has_labels: ["hold/do-not-merge"]
+    # only carbonaut members can disapprove
+    requires:
+      organizations: ["carbonaut-cloud"]
+    options:
+      # "methods" defines how users set and revoke disapproval.
+      methods:
+        disapprove:
+          comments: ["/hold"]
+          github_review: true
+        revoke:
+          comments: ["/lgtm"]
+          github_review: true
+
+approval_rules:
+  - name: basic approval
+    description: All folks from the carbonaut org can approve
+    requires:
+      count: 1
+      organizations: ["carbonaut-cloud"]
+
+  - name: policy changes
+    description: Policy changes need to get approved by a maintainer
+    if:
+      only_changed_files:
+        paths:
+          - ".policy.yml"
+    requires:
+      count: 1
+      teams: ["carbonaut-cloud/maintainers"]
