@@ -28,10 +28,10 @@ policy:
       # "methods" defines how users set and revoke disapproval.
       methods:
         disapprove:
-          comments: ["/hold"]
+          comments: ["/disapprove"]
           github_review: true
         revoke:
-          comments: ["/lgtm"]
+          comments: ["/approve"]
           github_review: true
 
 approval_rules:
