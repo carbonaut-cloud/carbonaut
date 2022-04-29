@@ -9,7 +9,6 @@ issue:
       list: [ "accepted" ]
       multiple: false
       author_association:
-        collaborator: true
         member: true
         owner: true
       needs:
@@ -19,13 +18,13 @@ issue:
           The triage accepted label can be added by org members by writing `/triage accepted` in a comment.
 
     - prefix: kind
-      list: [ "feature", "doc", "bug-fix", "bug", "governance", "clean-up", "epic" ]
+      list: [ "feature", "docs", "bug-fix", "bug", "governance", "clean-up", "epic" ]
       needs:
         comment: |
           @$AUTHOR: There are no 'kind' label on this issue. Please specify a 'kind' label, thank you!
 
           * `/kind feature`
-          * `/kind doc`
+          * `/kind docs`
           * `/kind bug`
           * `/kind bug-fix`
           * `/kind governance`
@@ -81,20 +80,147 @@ issue:
         collaborator: true
         member: true
         owner: true
+
+    # REMOVE LABEL COMMANDS
+    - cmd: /remove duplicate
+      type: label
+      label:
+        remove: [ 'duplicate' ]
+      author_association:
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove help
+      type: label
+      label:
+        remove: [ 'help wanted' ]
+
+    - cmd: /remove priority
+      type: label
+      label:
+        remove: [ 'priority/critical-urgent', 'priority/urgent', 'priority/important-soon', 'priority/long-term' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove triage/accepted
+      type: label
+      label:
+        add: needs/triage
+        remove: [ 'triage/accepted' ]
+      author_association:
+        member: true
+        owner: true
+
+    - cmd: /remove warning/breaking-change
+      type: label
+      label:
+        remove: [ 'warning/breaking-change' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove stale
+      type: label
+      label:
+        remove: [ 'stale' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    # Remove kind labels
+    - cmd: /remove kind/bug
+      type: label
+      label:
+        remove: [ 'kind/bug' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/bug-fix
+      type: label
+      label:
+        remove: [ 'kind/bug-fix' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/epic
+      type: label
+      label:
+        remove: [ 'kind/epic' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/feature
+      type: label
+      label:
+        remove: [ 'kind/feature' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+
+    - cmd: /remove kind/clean-up
+      type: label
+      label:
+        remove: [ 'kind/clean-up' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/docs
+      type: label
+      label:
+        remove: [ 'kind/docs' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/governance
+      type: label
+      label:
+        remove: [ 'kind/docs' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
 #
 # PULL REQUEST COMMANDS
 #
 pull_request:
   labels:
     - prefix: kind
-      list: [ "feature", "doc", "bug-fix", "bug", "governance", "clean-up" ]
+      list: [ "feature", "docs", "bug-fix", "bug", "governance", "clean-up" ]
       multiple: false
       needs:
         comment: |
           @$AUTHOR: There are no 'kind' label on this PR. Please specify a 'kind' label, thank you!
 
           * `/kind feature`
-          * `/kind doc`
+          * `/kind docs`
           * `/kind bug`
           * `/kind bug-fix`
           * `/kind governance`
@@ -112,6 +238,14 @@ pull_request:
     - prefix: merge
       multiple: false
       list: [ "squash", "rebase" ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - prefix: warning
+      list: [ "breaking-change" ]
       author_association:
         author: true
         collaborator: true
@@ -146,7 +280,7 @@ pull_request:
     - cmd: /lgtm
       type: label
       label:
-        add: /lgtm
+        add: lgtm
       author_association:
         member: true
         owner: true
@@ -160,8 +294,106 @@ pull_request:
         member: true
         owner: true
 
-    - prefix: warning
-      list: [ "breaking-change" ]
+    # REMOVE LABEL COMMANDS
+    - cmd: /remove lgtm
+      type: label
+      label:
+        remove: [ 'lgtm' ]
+      author_association:
+        member: true
+        owner: true
+
+    - cmd: /remove stale
+      type: label
+      label:
+        remove: [ 'stale' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove merge
+      type: label
+      label:
+        remove: [ 'merge/rebase', 'merge/squash' ]
+
+    - cmd: /remove priority
+      type: label
+      label:
+        remove: [ 'priority/critical-urgent', 'priority/urgent', 'priority/important-soon', 'priority/long-term' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove warning/breaking-change
+      type: label
+      label:
+        remove: [ 'warning/breaking-change' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    # Remove kind labels
+    - cmd: /remove kind/bug
+      type: label
+      label:
+        remove: [ 'kind/bug' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/bug-fix
+      type: label
+      label:
+        remove: [ 'kind/bug-fix' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/feature
+      type: label
+      label:
+        remove: [ 'kind/feature' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+
+    - cmd: /remove kind/clean-up
+      type: label
+      label:
+        remove: [ 'kind/clean-up' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/docs
+      type: label
+      label:
+        remove: [ 'kind/docs' ]
+      author_association:
+        author: true
+        collaborator: true
+        member: true
+        owner: true
+
+    - cmd: /remove kind/governance
+      type: label
+      label:
+        remove: [ 'kind/docs' ]
       author_association:
         author: true
         collaborator: true
