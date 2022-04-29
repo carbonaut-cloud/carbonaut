@@ -1,0 +1,33 @@
+daysUntilStale: 60
+daysUntilClose: 14
+onlyLabels: []
+exemptLabels: []
+exemptProjects: false
+exemptMilestones: false
+exemptAssignees: false
+
+staleLabel: stale
+
+markComment: >
+  This issue has been automatically marked as stale because it has not had
+  recent activity. It will be closed if no further activity occurs. Thank you
+  for your contributions.
+
+  cc @carbonaut-cloud/maintainers
+
+# Limit the number of actions per hour, from 1-30.
+limitPerRun: 6
+
+pulls:
+  daysUntilStale: 30
+  markComment: >
+    This pull request has been automatically marked as stale because it has not had
+    recent activity. It will be closed if no further activity occurs. Thank you
+    for your contributions.
+
+    cc @carbonaut-cloud/maintainers
+
+issues:
+  exemptLabels:
+    - kind/epic
+    - triage/accepted

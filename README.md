@@ -39,3 +39,13 @@ If you like to contribute, get in contact with us and follow [this short guide](
 ## Code of Conduct
 In order to contribute to Carbonaut you agree to follow our [Code of Conduct](https://github.com/carbonaut-cloud/community/blob/main/CODE_OF_CONDUCT). The code of conduct applies at any place where the contributors of Carbonaut interact with each other, virtually or in person.
 
+## Development
+
+To develop `Carbonaut` you need to install [golang](https://golang.org/doc/install).
+
+**To verify the code**
+```bash
+make verify
+```
+
+Feel free to jump on unassigned issues and open up PRs. If you have any questions feel free to reach out over [Slack](https://join.slack.com/t/carbonautgroup/shared_invite/zt-17d78zd8j-qa0KvMS_be21E3hH9fpdYQ).
