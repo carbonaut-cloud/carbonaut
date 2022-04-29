@@ -72,6 +72,14 @@ issue:
       label:
         add: help wanted
 
+    - cmd: /remove help
+      type: label
+      label:
+        remove: [ 'help wanted' ]
+      author_association:
+        member: true
+        owner: true
+
     - cmd: /duplicate
       type: label
       label:
