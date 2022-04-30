@@ -40,6 +40,10 @@ approval_rules:
     requires:
       count: 1
       organizations: ["carbonaut-cloud"]
+    options:
+      methods:
+        comments: ["/lgtm"]
+        github_review: true
 
   - name: policy changes
     description: Policy changes need to get approved by a maintainer
@@ -50,3 +54,7 @@ approval_rules:
     requires:
       count: 1
       teams: ["carbonaut-cloud/maintainers"]
+    options:
+      methods:
+        comments: ["/lgtm"]
+        github_review: true
