@@ -26,15 +26,26 @@ jobs:
     - name: Install goveralls
       run: go install github.com/mattn/goveralls@latest
     - name: Send coverage
-      id: sendcoverage
+      id: send_coverage
       env:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        goveralls -coverprofile=covprofile -service=github > coverage_link
-        cat coverage_link
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v2
+        goveralls -coverprofile=covprofile -service=github
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      id: fc
       with:
         issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Code coverage link
+
+    - name: Create or update comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
         body: |
-          ${{ steps.sendcoverage.outputs.coverage_link }}
+          Code coverage link:
+          ${{ steps.send_coverage.outputs }}
+        edit-mode: replace
+

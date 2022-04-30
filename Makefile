@@ -35,6 +35,7 @@ verify-git:
 
 upgrade:
 	go get -u -t ./...
+	
 
 act:
 	echo "make sure to start docker and install the tool act to run github actions locally"
