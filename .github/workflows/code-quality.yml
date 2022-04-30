@@ -35,8 +35,7 @@ jobs:
       env:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        goveralls -coverprofile=covprofile -service=github > tmp
-        echo "::set-output name=code-coverage-link::$(cat tmp)"
+        goveralls -coverprofile=covprofile -service=github > code_coverage_link
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
@@ -55,5 +54,5 @@ jobs:
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           Code coverage link: 
-          ${{join(steps.send_coverage.outputs.*, '\n')}}
+          ${{ cat code_coverage_link }}
         edit-mode: replace
