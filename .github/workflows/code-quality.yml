@@ -38,7 +38,7 @@ jobs:
         goveralls -coverprofile=covprofile -service=github > code_coverage_link
         coverage="$(cat code_coverage_link)"
         echo "::set-output name=coverage::$coverage"
-        echo "hello"
+        echo $(!!)
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
