@@ -15,37 +15,44 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: '1.16'
+
     - name: Check out code
       uses: actions/checkout@v2
+
     - name: Install dependencies
       run: |
         go mod download
+
     - name: Run Unit tests
       run: |
         go test -race -covermode atomic -coverprofile=covprofile ./...
+
     - name: Install goveralls
       run: go install github.com/mattn/goveralls@latest
+
     - name: Send coverage
       id: send_coverage
       env:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         goveralls -coverprofile=covprofile -service=github
+
     - name: Find Comment
       uses: peter-evans/find-comment@v2
       id: fc
       with:
+        token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
         issue-number: ${{ github.event.pull_request.number }}
-        comment-author: 'github-actions[bot]'
+        comment-author: 'carbonautMustache'
         body-includes: Code coverage link
 
     - name: Create or update comment
       uses: peter-evans/create-or-update-comment@v2
       with:
+        token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
           Code coverage link:
-          ${{ steps.send_coverage.outputs }}
+          ${{ join(steps.send_coverage.outputs.*, '\n') }}
         edit-mode: replace
-
