@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Test with Coverage
+    name: Code Coverage
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go
@@ -52,5 +52,6 @@ jobs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          Code coverage link: ${{ steps.send_coverage.outputs.code-coverage-link }}
+          Code coverage link: 
+          ${{join(steps.send_coverage.outputs.*, '\n')}}
         edit-mode: replace
