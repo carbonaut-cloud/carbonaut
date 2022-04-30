@@ -20,5 +20,5 @@ jobs:
     steps:
       - uses: carbonaut-cloud/carbonaut-governance-bot@v2.0.11
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
           config-path: .github/governance.yml
