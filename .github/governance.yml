@@ -222,7 +222,6 @@ pull_request:
   labels:
     - prefix: kind
       list: [ "feature", "docs", "bug-fix", "bug", "governance", "clean-up" ]
-      multiple: false
       needs:
         comment: |
           @$AUTHOR: There are no 'kind' label on this PR. Please specify a 'kind' label, thank you!
