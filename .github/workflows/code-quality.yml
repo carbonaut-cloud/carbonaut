@@ -35,9 +35,14 @@ jobs:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         goveralls -coverprofile=covprofile -service=github > code_coverage_link
-        echo "-> $(cat code_coverage_link) <-"
         coverage="$(cat code_coverage_link)"
         echo "::set-output name=coverage::$coverage"
+
+    - uses: actions-ecosystem/action-regex-match@v2
+      id: regex-send-coverage
+      with:
+        text: ${{ steps.send-coverage.outputs.coverage }}
+        regex: 'https://\w+.\w+/jobs/\d+'
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
@@ -55,5 +60,5 @@ jobs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          Code coverage link: ${{ steps.send-coverage.outputs.coverage }}
+          Code coverage link: ${{ steps.regex-send-coverage.outputs.match }}
         edit-mode: replace
