@@ -36,7 +36,6 @@ jobs:
       run: |
         CODE_COVERAGE_LINK=$(goveralls -coverprofile=covprofile -service=github)
         coverage=$(echo $CODE_COVERAGE_LINK)
-        echo $coverage
         echo "::set-output name=coverage::$coverage"
 
     - name: Step
