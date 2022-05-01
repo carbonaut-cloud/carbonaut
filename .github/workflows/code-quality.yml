@@ -38,9 +38,6 @@ jobs:
         coverage=$(echo $CODE_COVERAGE_LINK)
         echo "::set-output name=coverage::$coverage"
 
-    - name: Step
-      run: echo $CODE_COVERAGE_LINK
-
     - name: Find Comment
       uses: peter-evans/find-comment@v2
       id: fc
