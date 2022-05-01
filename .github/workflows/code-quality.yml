@@ -36,9 +36,9 @@ jobs:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         goveralls -coverprofile=covprofile -service=github > code_coverage_link
+        cat code_coverage_link
         coverage="$(cat code_coverage_link)"
         echo "::set-output name=coverage::$coverage"
-        echo $(!!)
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
