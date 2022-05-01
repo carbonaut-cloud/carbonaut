@@ -35,8 +35,9 @@ jobs:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         CODE_COVERAGE_LINK=$(goveralls -coverprofile=covprofile -service=github)
-        echo $CODE_COVERAGE_LINK
-        # echo "::set-output name=coverage::$coverage"
+        coverage=$(echo $CODE_COVERAGE_LINK)
+        echo $coverage
+        echo "::set-output name=coverage::$coverage"
 
     - name: Step
       run: echo $CODE_COVERAGE_LINK
@@ -57,5 +58,5 @@ jobs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          Code coverage link: ${{ env.CODE_COVERAGE_LINK }}
+          Code coverage link: ${{ steps.send-coverage.outputs.coverage }}
         edit-mode: replace
