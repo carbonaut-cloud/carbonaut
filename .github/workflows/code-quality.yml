@@ -1,4 +1,4 @@
-name: Quality
+name: Code coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  coveralls:
     name: Code Coverage
     runs-on: ubuntu-latest
     steps:
@@ -35,8 +35,8 @@ jobs:
       env:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        goveralls -coverprofile=covprofile -service=github > code_coverage_link
-        echo "-> $(cat code_coverage_link)"
+        goveralls -coverprofile=covprofile -service=github 2> code_coverage_link
+        echo "-> $(cat code_coverage_link) <-"
         coverage="$(cat code_coverage_link)"
         echo "::set-output name=coverage::$coverage"
 
