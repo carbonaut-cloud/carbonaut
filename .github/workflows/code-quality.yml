@@ -38,11 +38,8 @@ jobs:
         coverage="$(cat code_coverage_link)"
         echo "::set-output name=coverage::$coverage"
 
-    - uses: actions-ecosystem/action-regex-match@v2
-      id: regex-send-coverage
-      with:
-        text: ${{ steps.send-coverage.outputs.coverage }}
-        regex: 'https://\w+.\w+/jobs/\d+'
+    - name: Step
+      run: cat code_coverage_link
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
@@ -60,5 +57,5 @@ jobs:
         comment-id: ${{ steps.fc.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}
         body: |
-          Code coverage link: ${{ steps.regex-send-coverage.outputs.match }}
+          Code coverage link: ${{ cat code_coverage_link }}
         edit-mode: replace
