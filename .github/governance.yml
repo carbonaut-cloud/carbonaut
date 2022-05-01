@@ -298,6 +298,8 @@ pull_request:
         add: hold/do-not-merge
         remove: [ 'lgtm' ]
       author_association:
+        author: true
+        collaborator: true
         member: true
         owner: true
 
