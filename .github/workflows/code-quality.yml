@@ -35,10 +35,11 @@ jobs:
         COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         CODE_COVERAGE_LINK=$(goveralls -coverprofile=covprofile -service=github)
+        echo $CODE_COVERAGE_LINK
         # echo "::set-output name=coverage::$coverage"
 
     - name: Step
-      run: echo env.CODE_COVERAGE_LINK
+      run: echo $CODE_COVERAGE_LINK
 
     - name: Find Comment
       uses: peter-evans/find-comment@v2
