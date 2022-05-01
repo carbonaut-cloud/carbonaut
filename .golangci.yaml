@@ -3,17 +3,6 @@ run:
   concurrency: 6
   deadline: 5m
 
-  skip-files:
-    - pkg/splunk/config.go
-issues:
-  exclude-rules:
-    # counterfeiter fakes are usually named 'fake_<something>.go'
-    - path: fake_.*\.go
-      linters:
-        - gocritic
-        - golint
-        - dupl
-
   # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
   max-issues-per-linter: 0
 
@@ -70,7 +59,6 @@ linters-settings:
     keywords:
       - BUG
       - FIXME
-      - HACK
   errcheck:
     check-type-assertions: true
     check-blank: true

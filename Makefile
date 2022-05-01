@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-install: 
-	go get ./...
-
 verify: verify-git verify-go-mod verify-build verify-lint verify-test-unit
 
 verify-build:
@@ -35,7 +32,9 @@ verify-git:
 
 upgrade:
 	go get -u -t ./...
-	
+
+install: 
+	go get ./...
 
 act:
 	echo "make sure to start docker and install the tool act to run github actions locally"
