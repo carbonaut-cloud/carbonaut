@@ -20,7 +20,7 @@ jobs:
     name: Governance
     runs-on: ubuntu-latest
     steps:
-      - uses: carbonaut-cloud/carbonaut-governance-bot@v2.0.11
+      - uses: carbonaut-cloud/carbonaut-governance-bot@v2
         with:
           github-token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
           config-path: .github/governance.yml
