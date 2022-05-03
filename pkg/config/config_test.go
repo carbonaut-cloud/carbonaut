@@ -32,7 +32,7 @@ const (
 
 func TestGetCarbonautConfigNegInvalidConfigMedium(t *testing.T) {
 	cfg, err := GetCarbonautConfig(&GetCarbonautConfigIn{
-		ConfigMedium:     configMedium(GenericDoesNotExistString),
+		ConfigMedium:     configProvider(GenericDoesNotExistString),
 		ConfigMediumFile: &FileMediumConfig{},
 	})
 	assert.Error(t, err)

@@ -25,17 +25,17 @@ import (
 	"gopkg.in/validator.v2"
 )
 
-// configMedium define how the decode the provided configuration
-type configMedium string
+// configProvider define how the decode the provided configuration
+type configProvider string
 
 // FileConfigMedium The configuration gets provided by file
-const FileConfigMedium configMedium = "file"
+const FileConfigMedium configProvider = "file"
 
 // NOTE: it would be possible to define remote kv-stores later that hold the configuration: https://github.com/spf13/viper#remote-keyvalue-store-support
 
 // Used to configure where to find the configuration file and how to parse it
 type GetCarbonautConfigIn struct {
-	ConfigMedium     configMedium `default:"file"`
+	ConfigMedium     configProvider `default:"file"`
 	ConfigMediumFile *FileMediumConfig
 }
 
