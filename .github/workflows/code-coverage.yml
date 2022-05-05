@@ -1,0 +1,56 @@
+name: Code coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coveralls:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.17'
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: go mod download
+
+    - name: Run Unit tests
+      run: go test -race -covermode atomic -coverprofile=covprofile ./...
+
+    - name: Install goveralls
+      run: go install github.com/mattn/goveralls@latest
+
+    - name: Send coverage
+      id: send-coverage
+      env:
+        COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        CODE_COVERAGE_LINK=$(goveralls -coverprofile=covprofile -service=github)
+        coverage=$(echo $CODE_COVERAGE_LINK)
+        echo "::set-output name=coverage::$coverage"
+
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      id: fc
+      with:
+        token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'carbonautMustache'
+        body-includes: Code coverage link
+
+    - name: Create or update comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        token: ${{secrets.GOVERNANCE_BOT_TOKEN}}
+        comment-id: ${{ steps.fc.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          Code coverage link: ${{ steps.send-coverage.outputs.coverage }}
+        edit-mode: replace

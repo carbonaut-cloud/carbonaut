@@ -1,4 +1,4 @@
-name: verify
+name: Verify quality
 
 on:
   push:
@@ -9,19 +9,13 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Setup Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.17.0'
-    
-    - name: Install dependencies
-      run: |
-        go version
-        make install
+        go-version: '1.17'
 
-    - name: Verify
-      run: make verify
+    - name: Verify Git
+      run: make verify 

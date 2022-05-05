@@ -34,70 +34,35 @@ issue:
     - prefix: priority
       multiple: false
       list: [ "critical-urgent", "urgent", "important-soon", "long-term" ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - prefix: warning
       list: [ "breaking-change" ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
   chat_ops:
     - cmd: /close
       type: close
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /cc
       type: none # does not trigger anything
 
     - cmd: /assign
       type: assign
-      author_association:
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /help
       type: label
       label:
         add: help wanted
 
-    - cmd: /remove help
-      type: label
-      label:
-        remove: [ 'help wanted' ]
-      author_association:
-        member: true
-        owner: true
-
     - cmd: /duplicate
       type: label
       label:
         add: duplicate
-      author_association:
-        collaborator: true
-        member: true
-        owner: true
 
     # REMOVE LABEL COMMANDS
     - cmd: /remove duplicate
       type: label
       label:
         remove: [ 'duplicate' ]
-      author_association:
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /remove help
       type: label
@@ -108,11 +73,6 @@ issue:
       type: label
       label:
         remove: [ 'priority/critical-urgent', 'priority/urgent', 'priority/important-soon', 'priority/long-term' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /remove triage/accepted
       type: label
@@ -127,93 +87,41 @@ issue:
       type: label
       label:
         remove: [ 'warning/breaking-change' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /remove stale
       type: label
       label:
         remove: [ 'stale' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     # Remove kind labels
     - cmd: /remove kind/bug
       type: label
       label:
         remove: [ 'kind/bug' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/bug-fix
       type: label
       label:
         remove: [ 'kind/bug-fix' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/epic
       type: label
       label:
         remove: [ 'kind/epic' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/feature
       type: label
       label:
         remove: [ 'kind/feature' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
-
     - cmd: /remove kind/clean-up
       type: label
       label:
         remove: [ 'kind/clean-up' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/docs
       type: label
       label:
         remove: [ 'kind/docs' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/governance
       type: label
       label:
         remove: [ 'kind/docs' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
 #
 # PULL REQUEST COMMANDS
@@ -222,7 +130,6 @@ pull_request:
   labels:
     - prefix: kind
       list: [ "feature", "docs", "bug-fix", "bug", "governance", "clean-up" ]
-      multiple: false
       needs:
         comment: |
           @$AUTHOR: There are no 'kind' label on this PR. Please specify a 'kind' label, thank you!
@@ -237,53 +144,23 @@ pull_request:
     - prefix: priority
       multiple: false
       list: [ "critical-urgent", "urgent", "important-soon", "long-term" ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - prefix: merge
       multiple: false
       list: [ "squash", "rebase" ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - prefix: warning
       list: [ "breaking-change" ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
   chat_ops:
     - cmd: /close
       type: close
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /cc
       type: review
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /assign
       type: assign
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /lgtm
       type: label
@@ -299,6 +176,8 @@ pull_request:
         add: hold/do-not-merge
         remove: [ 'lgtm' ]
       author_association:
+        author: true
+        collaborator: true
         member: true
         owner: true
 
@@ -315,6 +194,11 @@ pull_request:
       type: label
       label:
         remove: [ 'stale' ]
+
+    - cmd: /remove hold
+      type: label
+      label:
+        remove: [ 'hold/do-not-merge' ]
       author_association:
         author: true
         collaborator: true
@@ -330,80 +214,34 @@ pull_request:
       type: label
       label:
         remove: [ 'priority/critical-urgent', 'priority/urgent', 'priority/important-soon', 'priority/long-term' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     - cmd: /remove warning/breaking-change
       type: label
       label:
         remove: [ 'warning/breaking-change' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
 
     # Remove kind labels
     - cmd: /remove kind/bug
       type: label
       label:
         remove: [ 'kind/bug' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/bug-fix
       type: label
       label:
         remove: [ 'kind/bug-fix' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/feature
       type: label
       label:
         remove: [ 'kind/feature' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
-
     - cmd: /remove kind/clean-up
       type: label
       label:
         remove: [ 'kind/clean-up' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/docs
       type: label
       label:
         remove: [ 'kind/docs' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true
-
     - cmd: /remove kind/governance
       type: label
       label:
         remove: [ 'kind/docs' ]
-      author_association:
-        author: true
-        collaborator: true
-        member: true
-        owner: true

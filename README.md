@@ -1,4 +1,10 @@
 # Carbonaut
+
+[![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/carbonaut-cloud/carbonaut.svg)](https://github.com/carbonaut-cloud/carbonaut)
+[![Go Report Card](https://goreportcard.com/badge/carbonaut-cloud/carbonaut)](https://goreportcard.com/report/carbonaut-cloud/carbonaut)
+[![Coverage Status](https://coveralls.io/repos/github/carbonaut-cloud/carbonaut/badge.svg?branch=main)](https://coveralls.io/github/carbonaut-cloud/carbonaut?branch=main)
+[![Slack](https://img.shields.io/badge/Slack-%23general-blueviolet)](https://carbonautgroup.slack.com/archives/C03B9P2T3AB)
+
 Carbonaut is a open source tool to measure your carbon emissions, analyze your resource consumptions and support you in optimizing your green house gas footprint.
 
 Carbonaut targets any ICT infrastructure, also in the first phases of development public cloud provider and IaaS provider are the main target. The system will also integrate with Kubernetes and other tools on the market which are able to manage and predict resource utilization.
