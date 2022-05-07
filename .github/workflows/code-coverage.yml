@@ -37,6 +37,7 @@ jobs:
         echo "::set-output name=coverage::$coverage"
 
     - name: Find Comment
+      if: github.ref != 'refs/heads/main'
       uses: peter-evans/find-comment@v2
       id: fc
       with:
@@ -46,6 +47,7 @@ jobs:
         body-includes: Code coverage link
 
     - name: Create or update comment
+      if: github.ref != 'refs/heads/main'
       uses: peter-evans/create-or-update-comment@v2
       with:
         token: ${{secrets.GOVERNANCE_BOT_TOKEN}}

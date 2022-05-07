@@ -16,15 +16,11 @@ package main
 
 import (
 	"carbonaut.cloud/carbonaut/cmd"
-	"carbonaut.cloud/carbonaut/pkg/util"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
 	if err := cmd.Execute(); err != nil {
-		logger, err := util.GetDefaultZapCfg().Build()
-		defer func() {
-			err = logger.Sync()
-		}()
-		logger.Sugar().Fatal(err)
+		log.Fatal().Err(err)
 	}
 }

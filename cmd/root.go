@@ -15,30 +15,13 @@
 package cmd
 
 import (
-	"carbonaut.cloud/carbonaut/pkg/util"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 )
-
-var cfg *Config
 
 var rootCmd = &cobra.Command{
 	Use:   "carbonaut",
 	Short: "Run carbonaut commands",
 	Long:  "TBD",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logger, err := util.GetDefaultZapCfg().Build()
-		if err != nil {
-			return err
-		}
-		cfg = &Config{
-			logger: logger.Sugar(),
-		}
-		return nil
-	},
-	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-		return cfg.logger.Sync()
-	},
 }
 
 func init() {
@@ -49,10 +32,6 @@ func init() {
 
 	rootCmd.AddCommand(deployCmd)
 	deployCmd.AddCommand(deployDescribeCmd)
-}
-
-type Config struct {
-	logger *zap.SugaredLogger
 }
 
 // Execute executes the ci-reporter root command.

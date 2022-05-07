@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package util
+package models
 
-import (
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-)
-
-func GetDefaultZapCfg() zap.Config {
-	cfg := zap.NewDevelopmentConfig()
-	cfg.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	return cfg
+// Emissions define data models
+type Emissions struct {
+	ID            uint    `gorm:"primarykey" json:"id"`
+	ResourceName  string  `gorm:"column:resource_name" json:"resource_name"`
+	ResourceOwner string  `gorm:"column:resource_owner" json:"resource_owner"`
+	ResourceType  string  `gorm:"column:resource_type" json:"resource_type"`
+	Provider      string  `gorm:"column:provider" json:"provider"`
+	MTCO2e        float32 `gorm:"column:mtco2e" json:"mtco2e"`
 }
