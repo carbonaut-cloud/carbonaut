@@ -72,6 +72,6 @@ func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
 	return carbonDB, nil
 }
 
-func (p P) Validate(cfg *Config) error {
+func (p P) Validate(cfg Config) error {
 	return fmt.Errorf("not implemented yet")
 }

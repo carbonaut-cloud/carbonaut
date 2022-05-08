@@ -15,7 +15,13 @@
 package sqlite
 
 import (
+	"errors"
 	"fmt"
+	"os"
+
+	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 type Config struct {
@@ -30,24 +36,28 @@ var Provider = P{
 	Name: "sqlite",
 }
 
-// func (p P) Connect(cfg interface{}) (methods.ICarbonDB, error) {
-// 	if _, err := os.Stat(cfg.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
-// 		return nil, err
-// 	}
-// 	// open connection to db file
-// 	db, err := gorm.Open(sqlite.Open(cfg.DatabaseFileName), &gorm.Config{})
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	// migrate tables
-// 	var carbonDB methods.CarbonDB
-// 	carbonDB.Init(db)
-// 	if err := carbonDB.Migrate(); err != nil {
-// 		return nil, err
-// 	}
-// 	return carbonDB, nil
-// }
+// Status() (string, error)
+// 	Connect(cfg ImplP) (methods.ICarbonDB, error)
+// 	Validate(cfg ImplP) error
 
-func (p P) Validate(cfg interface{}) error {
+func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
+	if _, err := os.Stat(cfg.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+		return nil, err
+	}
+	// open connection to db file
+	db, err := gorm.Open(sqlite.Open(cfg.DatabaseFileName), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	// migrate tables
+	var carbonDB methods.CarbonDB
+	carbonDB.Init(db)
+	if err := carbonDB.Migrate(); err != nil {
+		return nil, err
+	}
+	return carbonDB, nil
+}
+
+func (p P) Validate(cfg Config) error {
 	return fmt.Errorf("not implemented yet")
 }

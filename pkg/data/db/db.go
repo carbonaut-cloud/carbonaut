@@ -20,48 +20,23 @@ import (
 	"fmt"
 
 	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/postgres"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/sqlite"
+	"carbonaut.cloud/carbonaut/pkg/data/db/provider"
 )
 
 func ValidateConfig(cfg *Config) error {
 	return fmt.Errorf("provided database configuration is invalid")
 }
 
+// Provider config gets dynamically set over the provider string specification
 type Config struct {
-	Provider string `validate:"nonzero"`
-	// Provider config gets dynamically set over the provider string specification
-	ProviderConfig interface{}
+	Provider provider.Config
 }
 
 // establish a connection to the configured database
 func Connect(cfg *Config) (methods.ICarbonDB, error) {
-	provider, err := resolveProvider(cfg)
-	if err != nil {
-		return nil, err
-	}
-	provider.Connect(cfg)
-	return nil, fmt.Errorf("not implemented")
-}
-
-// resolve which database provider is specified in the configuration
-func resolveProvider(cfg *Config) (IProvider, error) {
-	switch cfg.Provider {
-	case sqlite.Provider.Name:
-		fmt.Println("OS X.")
-	case postgres.Provider.Name:
-		fmt.Println("OS X.")
-		// postgres.Provider.Connect(cfg.ProviderConfig)
-	default:
-		return nil, fmt.Errorf("specified provider %s is not supported", cfg.Provider)
-	}
+	// p, err := provider.ResolveProvider(cfg.Provider)
 	return nil, fmt.Errorf("not implemented")
 }
 
 // DatabaseDriver
 type DatabaseDriver string
-
-type IProvider interface {
-	Connect(cfg interface{}) (methods.ICarbonDB, error)
-	Validate(cfg interface{}) error
-}
