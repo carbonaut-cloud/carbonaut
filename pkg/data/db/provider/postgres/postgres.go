@@ -22,6 +22,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type SSLMode string
+
+const (
+	SSLModeDisable = "disable"
+	SSLModeEnable  = "enable"
+)
+
 type Config struct {
 	Port         int
 	Password     string
@@ -31,20 +38,7 @@ type Config struct {
 	SSLMode      SSLMode
 }
 
-type SSLMode string
-
-const (
-	SSLModeDisable = "disable"
-	SSLModeEnable  = "enable"
-)
-
-type P struct {
-	Name string
-}
-
-var Provider = P{
-	Name: "postgres",
-}
+const Name = "postgres"
 
 // Connect establishes a connection to the provided database configuration
 // The database can hosted locally (or somewhere else)
@@ -53,13 +47,12 @@ var Provider = P{
 // 2. psql -d postgres -h localhost -U postgres
 // 3. enter password: test
 // Setting the same information in PostgresConfig to connect to the local hosted database
-func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
+func (p Config) Connect() (methods.ICarbonDB, error) {
+	if err := p.ValidateConfig(); err != nil {
+		return nil, err
+	}
 	// open connection to db
-	db, err := gorm.Open(postgres.Open(
-		fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
-			cfg.Host, cfg.User, cfg.Password, cfg.DatabaseName, cfg.Port, cfg.SSLMode,
-		)), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(p.connString()), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +65,13 @@ func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
 	return carbonDB, nil
 }
 
-func (p P) Validate(cfg Config) error {
+func (p Config) ValidateConfig() error {
 	return fmt.Errorf("not implemented yet")
+}
+
+func (c Config) connString() string {
+	return fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
+		c.Host, c.User, c.Password, c.DatabaseName, c.Port, c.SSLMode,
+	)
 }

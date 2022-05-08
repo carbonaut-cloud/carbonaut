@@ -28,24 +28,14 @@ type Config struct {
 	DatabaseFileName string
 }
 
-type P struct {
-	Name string
-}
+const Name = "sqlite"
 
-var Provider = P{
-	Name: "sqlite",
-}
-
-// Status() (string, error)
-// 	Connect(cfg ImplP) (methods.ICarbonDB, error)
-// 	Validate(cfg ImplP) error
-
-func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
-	if _, err := os.Stat(cfg.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+func (p Config) Connect() (methods.ICarbonDB, error) {
+	if err := p.ValidateConfig(); err != nil {
 		return nil, err
 	}
 	// open connection to db file
-	db, err := gorm.Open(sqlite.Open(cfg.DatabaseFileName), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(p.DatabaseFileName), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -58,6 +48,9 @@ func (p P) Connect(cfg Config) (methods.ICarbonDB, error) {
 	return carbonDB, nil
 }
 
-func (p P) Validate(cfg Config) error {
+func (p Config) ValidateConfig() error {
+	if _, err := os.Stat(p.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+		return err
+	}
 	return fmt.Errorf("not implemented yet")
 }

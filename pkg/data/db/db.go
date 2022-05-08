@@ -17,15 +17,9 @@ package db
 // A ORM library is used to connect to the database: see https://gorm.io/docs/
 
 import (
-	"fmt"
-
 	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
 	"carbonaut.cloud/carbonaut/pkg/data/db/provider"
 )
-
-func ValidateConfig(cfg *Config) error {
-	return fmt.Errorf("provided database configuration is invalid")
-}
 
 // Provider config gets dynamically set over the provider string specification
 type Config struct {
@@ -34,9 +28,9 @@ type Config struct {
 
 // establish a connection to the configured database
 func Connect(cfg *Config) (methods.ICarbonDB, error) {
-	// p, err := provider.ResolveProvider(cfg.Provider)
-	return nil, fmt.Errorf("not implemented")
+	p, err := provider.ResolveProvider(cfg.Provider)
+	if err != nil {
+		return nil, err
+	}
+	return p.Connect()
 }
-
-// DatabaseDriver
-type DatabaseDriver string

@@ -28,23 +28,24 @@ type Config struct {
 	SqliteConfig   sqlite.Config
 }
 
-type ImplProvider interface {
-	sqlite.Config | postgres.Config
+type IProvider interface {
+	Connect() (methods.ICarbonDB, error)
+	ValidateConfig() error
 }
 
-type IProvider[ImplP ImplProvider] interface {
-	Status() (string, error)
-	Connect(cfg ImplP) (methods.ICarbonDB, error)
-	Validate(cfg ImplP) error
-}
-
-func ResolveProvider[IProvider ImplProvider](p string) (IProvider, error) {
-	switch p {
-	case sqlite.Provider.Name:
-		return sqlite.Provider, nil
-	case postgres.Provider.Name:
-		return postgres.Provider, nil
+func ResolveProvider(c Config) (IProvider, error) {
+	switch c.Name {
+	case sqlite.Name:
+		if err := c.SqliteConfig.ValidateConfig(); err != nil {
+			return nil, err
+		}
+		return c.SqliteConfig, nil
+	case postgres.Name:
+		if err := c.PostgresConfig.ValidateConfig(); err != nil {
+			return nil, err
+		}
+		return c.PostgresConfig, nil
 	default:
-		return nil, fmt.Errorf("specified provider %s is not supported", p)
+		return nil, fmt.Errorf("specified provider %s is not supported", c.Name)
 	}
 }
