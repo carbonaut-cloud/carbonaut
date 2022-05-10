@@ -33,18 +33,18 @@ type IProvider interface {
 	ValidateConfig() error
 }
 
-func ResolveProvider(c Config) (IProvider, error) {
+func ResolveProvider(c *Config) (IProvider, error) {
 	switch c.Name {
 	case sqlite.Name:
 		if err := c.SqliteConfig.ValidateConfig(); err != nil {
 			return nil, err
 		}
-		return c.SqliteConfig, nil
+		return &c.SqliteConfig, nil
 	case postgres.Name:
 		if err := c.PostgresConfig.ValidateConfig(); err != nil {
 			return nil, err
 		}
-		return c.PostgresConfig, nil
+		return &c.PostgresConfig, nil
 	default:
 		return nil, fmt.Errorf("specified provider %s is not supported", c.Name)
 	}

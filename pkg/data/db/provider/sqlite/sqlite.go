@@ -20,22 +20,23 @@ import (
 	"os"
 
 	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
+	"gopkg.in/validator.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type Config struct {
-	DatabaseFileName string
+	DatabaseFileName string `validate:"nonzero"`
 }
 
 const Name = "sqlite"
 
-func (p Config) Connect() (methods.ICarbonDB, error) {
-	if err := p.ValidateConfig(); err != nil {
+func (c *Config) Connect() (methods.ICarbonDB, error) {
+	if err := c.ValidateConfig(); err != nil {
 		return nil, err
 	}
 	// open connection to db file
-	db, err := gorm.Open(sqlite.Open(p.DatabaseFileName), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(c.DatabaseFileName), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -48,9 +49,13 @@ func (p Config) Connect() (methods.ICarbonDB, error) {
 	return carbonDB, nil
 }
 
-func (p Config) ValidateConfig() error {
-	if _, err := os.Stat(p.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+func (c *Config) ValidateConfig() error {
+	// validate input if `validate:xxx` is specified - see https://github.com/go-validator/validator
+	if err := validator.Validate(c); err != nil {
+		return fmt.Errorf("provided configuration is not valid, %v", err)
+	}
+	if _, err := os.Stat(c.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
 		return err
 	}
-	return fmt.Errorf("not implemented yet")
+	return nil
 }

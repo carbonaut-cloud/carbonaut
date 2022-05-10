@@ -22,6 +22,7 @@ import (
 	"carbonaut.cloud/carbonaut/pkg/data/db/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -47,14 +48,14 @@ func (s *CarbonDBTestSuite) SetupTest() {
 	err = ioutil.WriteFile(destinationFile, input, 0o600)
 	assert.NoError(s.T(), err)
 
-	// db, err := sqlite.Provider.Connect(&sqlite.Config{
-	// 	DatabaseFileName: destinationFile,
-	// })
+	db, err := gorm.Open(sqlite.Open(destinationFile), &gorm.Config{})
+	var carbonDB CarbonDB
+	carbonDB.Init(db)
 	assert.NoError(s.T(), err)
 
-	// s.dbDestinationFile = destinationFile
-	// assert.NotNil(s.T(), db)
-	// s.carbonautDB = db
+	s.dbDestinationFile = destinationFile
+	assert.NotNil(s.T(), carbonDB)
+	s.carbonautDB = carbonDB
 }
 
 // AfterTest gets called automatically after each test of the suite to clean up the test environment / add checks

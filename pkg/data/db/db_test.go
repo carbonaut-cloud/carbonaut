@@ -14,59 +14,46 @@
 
 package db
 
-// func TestValidateConfig(t *testing.T) {
-// 	err := ValidateConfig(&Config{
-// 		Provider:       "",
-// 		PostgresConfig: PostgresConfig{Port: 0, Password: "", Host: "", User: "", DatabaseName: "", SSLMode: ""},
-// 		SQLiteConfig:   SQLiteConfig{DatabaseFileName: ""},
-// 	})
-// 	assert.Error(t, err)
-// }
+import (
+	"fmt"
+	"testing"
 
-// //
-// // Database tests
-// //
-// //
+	"carbonaut.cloud/carbonaut/pkg/data/db/provider"
+	"carbonaut.cloud/carbonaut/pkg/data/db/provider/sqlite"
+	"github.com/stretchr/testify/assert"
+)
 
-// // CarbonDBTestSuite is used for testing with mocks
-// type CarbonDBTestSuite struct {
-// 	suite.Suite
-// 	DB                *gorm.DB
-// 	carbonautDB       ICarbonDB
-// 	dbDestinationFile string
-// }
+var (
+	negCfg = []Config{{
+		Provider: provider.Config{
+			Name: sqlite.Name,
+			SqliteConfig: sqlite.Config{
+				DatabaseFileName: "testdata/does-not-exist-db",
+			},
+		},
+	}}
+	posCfg = []Config{{
+		Provider: provider.Config{
+			Name: sqlite.Name,
+			SqliteConfig: sqlite.Config{
+				DatabaseFileName: "testdata/emptytest.db",
+			},
+		},
+	}}
+)
 
-// //
-// // Tests to establish a db connection
-// //
+func TestConnectNeg(t *testing.T) {
+	for i := range negCfg {
+		db, err := Connect(&negCfg[i])
+		assert.Error(t, err, fmt.Sprintf("expected error for provider %s on execution %d", negCfg[i].Provider.Name, i))
+		assert.Nil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", negCfg[i].Provider.Name, i))
+	}
+}
 
-// func TestConnectToSqliteNeg(t *testing.T) {
-// 	db, err := ConnectToSQLite(&SQLiteConfig{
-// 		DatabaseFileName: "db file does not exist",
-// 	})
-// 	assert.Error(t, err)
-// 	assert.Nil(t, db)
-// }
-
-// func TestConnectToSqliteNoAccessNeg(t *testing.T) {
-// 	db, err := ConnectToSQLite(&SQLiteConfig{
-// 		DatabaseFileName: "testdata/not-a-db",
-// 	})
-// 	assert.Error(t, err)
-// 	assert.Nil(t, db)
-// }
-
-// func TestConnectToSqliteWrongSchemaNeg(t *testing.T) {
-// 	db, err := ConnectToSQLite(&SQLiteConfig{
-// 		DatabaseFileName: "testdata/not-sqlite.yml",
-// 	})
-// 	assert.Error(t, err)
-// 	assert.Nil(t, db)
-// }
-
-// func TestConnectToPostgresNeg(t *testing.T) {
-// 	// injecting a empty config with default val's should fail
-// 	db, err := ConnectToPostgres(&PostgresConfig{})
-// 	assert.Error(t, err)
-// 	assert.Nil(t, db)
-// }
+func TestConnectPos(t *testing.T) {
+	for i := range posCfg {
+		db, err := Connect(&posCfg[i])
+		assert.NoError(t, err, fmt.Sprintf("no error expected for provider %s on execution %d", posCfg[i].Provider.Name, i))
+		assert.NotNil(t, db, fmt.Sprintf("not nil expected for provider %s on execution %d", posCfg[i].Provider.Name, i))
+	}
+}

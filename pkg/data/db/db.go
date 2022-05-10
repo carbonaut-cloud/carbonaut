@@ -28,7 +28,7 @@ type Config struct {
 
 // establish a connection to the configured database
 func Connect(cfg *Config) (methods.ICarbonDB, error) {
-	p, err := provider.ResolveProvider(cfg.Provider)
+	p, err := provider.ResolveProvider(&cfg.Provider)
 	if err != nil {
 		return nil, err
 	}
