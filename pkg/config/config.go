@@ -20,9 +20,9 @@ import (
 	"carbonaut.cloud/carbonaut/pkg/api"
 	"carbonaut.cloud/carbonaut/pkg/connector"
 	"carbonaut.cloud/carbonaut/pkg/data"
-	"github.com/mcuadros/go-defaults"
+	defaults "github.com/mcuadros/go-defaults"
 	"github.com/spf13/viper"
-	"gopkg.in/validator.v2"
+	validator "gopkg.in/validator.v2"
 )
 
 // configProvider define how the decode the provided configuration

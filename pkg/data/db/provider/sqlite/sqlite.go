@@ -20,7 +20,7 @@ import (
 	"os"
 
 	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	"gopkg.in/validator.v2"
+	validator "gopkg.in/validator.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

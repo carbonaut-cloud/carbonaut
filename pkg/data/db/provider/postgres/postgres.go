@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	"gopkg.in/validator.v2"
+	validator "gopkg.in/validator.v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
