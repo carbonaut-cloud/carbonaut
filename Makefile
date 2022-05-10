@@ -38,4 +38,4 @@ install:
 
 act:
 	echo "make sure to start docker and install the tool act to run github actions locally"
-	act
+	act -j verify
