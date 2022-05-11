@@ -14,9 +14,50 @@
 
 package api
 
-// TODO: define API configuration options
+import (
+	"fmt"
+
+	"carbonaut.cloud/carbonaut/pkg/api/models"
+	"carbonaut.cloud/carbonaut/pkg/api/v1/config_api"
+	"carbonaut.cloud/carbonaut/pkg/api/v1/connector_api"
+	"carbonaut.cloud/carbonaut/pkg/api/v1/data_api"
+	"github.com/gofiber/fiber/v2"
+)
+
 // Config sets configuration file information that gets read by the pkg/config package
 // To set values in the configuration file use the path 'api.version'.
 type Config struct {
-	Version string `default:"v1"`
+	Version string `default:"v1" validate:"regexp=^v1$"`
+	Port    int    `default:"3000"`
+}
+
+// all routes in subpackages
+var routes = []models.IRoutes{
+	connector_api.Routes{},
+	config_api.Routes{},
+	data_api.Routes{},
+}
+
+// Start API server
+func Start(c *Config) {
+	app := fiber.New()
+	v := app.Group(fmt.Sprintf("/api/%s", c.Version))
+	addBasePathRoutes(v)
+	// Add routes to the API Server
+	for _, r := range routes {
+		// add recursion to build up API
+		group := v.Group(r.GetPrefix())
+		r.AddRoutes(group)
+	}
+	// Add a 404 Handler
+	app.Use(func(c *fiber.Ctx) error {
+		return c.SendStatus(404)
+	})
+	app.Listen(fmt.Sprintf(":%d", c.Port))
+}
+
+func addBasePathRoutes(r fiber.Router) {
+	r.Get("/*", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, Base API!")
+	})
 }
