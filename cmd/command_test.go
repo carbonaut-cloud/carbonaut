@@ -17,6 +17,7 @@ package cmd
 import (
 	"testing"
 
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,31 +27,31 @@ func TestRootCommand(t *testing.T) {
 }
 
 func TestDataExportCommand(t *testing.T) {
-	err := RunDataExport()
+	err := dataExportCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }
 
 func TestDataImportCommand(t *testing.T) {
-	err := RunDataImport()
+	err := dataImportCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }
 
 func TestDataReportCommand(t *testing.T) {
-	err := RunDataReport()
+	err := dataReportCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }
 
 func TestDataCommand(t *testing.T) {
-	err := RunData()
+	err := dataCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }
 
 func TestDeployCommand(t *testing.T) {
-	err := RunDeploy()
+	err := deployCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }
 
 func TestDeployDescribeCommand(t *testing.T) {
-	err := RunDeployDescribe()
+	err := deployDescribeCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)
 }

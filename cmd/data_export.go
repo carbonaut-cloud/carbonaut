@@ -31,10 +31,6 @@ var dataExportCmd = &cobra.Command{
 
 // RunDataExport run cli command `carbonaut data export``
 func RunDataExport() error {
-	out, err := exporter.DataExporter(&exporter.InExporter{})
-	if err != nil {
-		return err
-	}
-	cfg.logger.Info(out)
-	return nil
+	_, err := exporter.DataExporter(&exporter.InExporter{})
+	return err
 }

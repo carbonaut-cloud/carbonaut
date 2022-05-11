@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package util
+package models
 
-import (
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
-func TestGetDefaultZapCfgPos(t *testing.T) {
-	logger := GetDefaultZapCfg()
-	assert.NotNil(t, logger)
+// Emissions define data models
+type Emissions struct {
+	ID            uint    `gorm:"primarykey" json:"id"`
+	ResourceName  string  `gorm:"column:resource_name" json:"resource_name"`
+	ResourceOwner string  `gorm:"column:resource_owner" json:"resource_owner"`
+	ResourceType  string  `gorm:"column:resource_type" json:"resource_type"`
+	Provider      string  `gorm:"column:provider" json:"provider"`
+	MTCO2e        float32 `gorm:"column:mtco2e" json:"mtco2e"`
 }

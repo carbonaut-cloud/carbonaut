@@ -31,10 +31,6 @@ var dataReportCmd = &cobra.Command{
 
 // RunDataReport run cli command `carbonaut data report``
 func RunDataReport() error {
-	out, err := reporter.DataReporter(&reporter.InReporter{})
-	if err != nil {
-		return err
-	}
-	cfg.logger.Info(out)
-	return nil
+	_, err := reporter.DataReporter(&reporter.InReporter{})
+	return err
 }

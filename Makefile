@@ -25,7 +25,7 @@ verify-test-unit:
 
 verify-go-mod:
 	go vet
-	go mod tidy -compat=1.17
+	go mod tidy -compat=1.18
 
 verify-git:
 	git diff --exit-code
@@ -38,4 +38,4 @@ install:
 
 act:
 	echo "make sure to start docker and install the tool act to run github actions locally"
-	act
+	act -j verify

@@ -31,10 +31,6 @@ var dataImportCmd = &cobra.Command{
 
 // RunDataImport run cli command `carbonaut data import``
 func RunDataImport() error {
-	out, err := importer.DataImporter(&importer.InImporter{})
-	if err != nil {
-		return err
-	}
-	cfg.logger.Info(out)
-	return nil
+	_, err := importer.DataImporter(&importer.InImporter{})
+	return err
 }
