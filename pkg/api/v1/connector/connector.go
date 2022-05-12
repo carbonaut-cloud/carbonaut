@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package data_api
+package connector
 
 import (
 	"carbonaut.cloud/carbonaut/pkg/api/models"
@@ -22,7 +22,7 @@ import (
 type Routes struct{}
 
 func (c Routes) GetPrefix() string {
-	return "data"
+	return "connector"
 }
 
 func (c Routes) RouteSubGroups() []models.IRoutes {
@@ -30,7 +30,13 @@ func (c Routes) RouteSubGroups() []models.IRoutes {
 }
 
 func (c Routes) AddRoutes(r fiber.Router) {
-	r.Get("/*", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, Data API!")
-	})
+	r.Get("/*", helloConnectorAPIHandler)
+}
+
+// @description Dummy connector API test
+// @Success 200 {string} connector
+// @Tags connector
+// @Router /api/v1/connector/ [get]
+func helloConnectorAPIHandler(c *fiber.Ctx) error {
+	return c.SendString("connector")
 }

@@ -12,4 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package data_api
+package data
+
+import (
+	"carbonaut.cloud/carbonaut/pkg/api/models"
+	"github.com/gofiber/fiber/v2"
+)
+
+type Routes struct{}
+
+func (c Routes) GetPrefix() string {
+	return "data"
+}
+
+func (c Routes) RouteSubGroups() []models.IRoutes {
+	return []models.IRoutes{}
+}
+
+func (c Routes) AddRoutes(r fiber.Router) {
+	r.Get("/*", helloDataAPIHandler)
+}
+
+// @description Dummy data API test
+// @Success 200 {string} data
+// @Tags data
+// @Router /api/v1/data/ [get]
+func helloDataAPIHandler(c *fiber.Ctx) error {
+	return c.SendString("data")
+}

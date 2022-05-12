@@ -1,0 +1,47 @@
+info:
+  contact: {}
+  description: This API is used to interact with Carbonaut resources
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Carbonaut API
+paths:
+  /api/v1/config/:
+    get:
+      description: Dummy config API test
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - config
+  /api/v1/connector/:
+    get:
+      description: Dummy connector API test
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - connector
+  /api/v1/data/:
+    get:
+      description: Dummy data API test
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - data
+  /api/v1/status/:
+    get:
+      description: Carbonaut Status Endpoint
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+swagger: "2.0"
