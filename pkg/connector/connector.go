@@ -17,6 +17,4 @@ package connector
 // TODO: define Connector configuration options
 // Config sets configuration file information that gets read by the pkg/config package
 // To set values in the configuration file use the path 'connector.version'.
-type Config struct {
-	Version string `default:"v1"`
-}
+type Config struct{}
