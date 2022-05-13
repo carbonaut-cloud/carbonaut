@@ -5,6 +5,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: Carbonaut API
+  version: 0.0.1
 paths:
   /api/v1/config/:
     get:

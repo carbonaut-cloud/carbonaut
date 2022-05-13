@@ -46,6 +46,7 @@ type CarbonautAPI struct {
 }
 
 // @title Carbonaut API
+// @version 0.0.1
 // @description This API is used to interact with Carbonaut resources
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
