@@ -1,5 +1,7 @@
 # Carbonaut
 
+![carbonaut-banner](./assets/Carbonaut_Banner.png)
+
 [![GitHub go.mod Go version of a Go module](https://img.shields.io/github/go-mod/go-version/carbonaut-cloud/carbonaut.svg)](https://github.com/carbonaut-cloud/carbonaut)
 [![Go Report Card](https://goreportcard.com/badge/carbonaut-cloud/carbonaut)](https://goreportcard.com/report/carbonaut-cloud/carbonaut)
 [![Coverage Status](https://coveralls.io/repos/github/carbonaut-cloud/carbonaut/badge.svg?branch=main)](https://coveralls.io/github/carbonaut-cloud/carbonaut?branch=main)
