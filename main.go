@@ -19,6 +19,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// @title Carbonaut API
+// @contact.name Carbonaut Maintainers
+// @contact.email carbonaut.cloud
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	if err := cmd.Execute(); err != nil {
 		log.Fatal().Err(err)

@@ -4,19 +4,16 @@
 Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. If it fixes a bug or resolves a feature request, be sure to link to that issue. 
 -->
 
-### Types of changes
-
-What types of changes does your code introduce to Carbonaut?
+### What types of changes does your code introduce to Carbonaut?
+<!-- If multiple apply elaborate why multiple labels apply, thank you! -->
 
 <!--
 /kind feature
-/kind doc
+/kind docs
 /kind bug
 /kind bug-fix
 /kind governance
 /kind clean-up
-
-If multiple apply elaborate why multiple labels apply, thank you!
 -->
 
 
@@ -26,10 +23,10 @@ If multiple apply elaborate why multiple labels apply, thank you!
 
 _All boxes should be checked before the PR gets merged_
 - [ ] I have read the [CONTRIBUTING](https://github.com/carbonaut-cloud/community/blob/main/CONTRIBUTING.md) doc
-- [ ] Lint and unit tests pass locally with my changes
+- [ ] Lint and unit tests pass locally with my changes (`make verify`)
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have added necessary documentation (if done in a separate PR link to it in the comments section)
-- [ ] I don't have a merge commit in my history (see [git merge documentation](https://www.git-scm.com/docs/git-merge#_options)) (if applicable)
+- [ ] I don't have a merge commit in my history (see [git merge documentation](https://www.git-scm.com/docs/git-merge#_options))
 - [ ] I signed all my commits (see [how to sign commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits))
 
 #### Which issue(s) this PR fixes:
