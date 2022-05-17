@@ -36,11 +36,6 @@ func TestDataImportCommand(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestDataReportCommand(t *testing.T) {
-	err := dataReportCmd.RunE(&cobra.Command{}, []string{})
-	assert.Error(t, err)
-}
-
 func TestDataCommand(t *testing.T) {
 	err := dataCmd.RunE(&cobra.Command{}, []string{})
 	assert.Error(t, err)

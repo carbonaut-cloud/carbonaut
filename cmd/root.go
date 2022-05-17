@@ -28,7 +28,6 @@ func init() {
 	rootCmd.AddCommand(dataCmd)
 	dataCmd.AddCommand(dataExportCmd)
 	dataCmd.AddCommand(dataImportCmd)
-	dataCmd.AddCommand(dataReportCmd)
 
 	rootCmd.AddCommand(deployCmd)
 	deployCmd.AddCommand(deployDescribeCmd)
