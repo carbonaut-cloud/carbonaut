@@ -21,6 +21,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
@@ -31,6 +32,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
@@ -41,6 +43,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
@@ -51,6 +54,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
@@ -61,6 +65,7 @@ jobs:
     docker:
       - image: cimg/go:1.18.2
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run:
