@@ -1,76 +1,61 @@
 version: 2.1
 
-jobs:
-  install:
+commands:
+  verify-pre-run:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+
+executors:
+  docker-go-executor:
     docker:
       - image: cimg/go:1.18.2
+
+jobs:
+  install:
+    executor: docker-go-executor
     steps:
       - checkout
       - restore_cache:
           keys:
             - go-mod-v4-{{ checksum "go.sum" }}
-      - run:
-          name: Install
-          command: make install
+      - run: make install
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
             - "/go/pkg/mod"
 
   verify-go-mod:
-    docker:
-      - image: cimg/go:1.18.2
+    executor: docker-go-executor
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check go mod
-          command: make verify-go-mod
+      - verify-pre-run
+      - run: make verify-go-mod
 
   verify-git:
-    docker:
-      - image: cimg/go:1.18.2
+    executor: docker-go-executor
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check git tree
-          command: make verify-git
+      - verify-pre-run
+      - run: make verify-git
 
   verify-go-build:
-    docker:
-      - image: cimg/go:1.18.2
+    executor: docker-go-executor
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check go build
-          command: make verify-build
+      - verify-pre-run
+      - run: make verify-build
 
   verify-linting:
-    docker:
-      - image: cimg/go:1.18.2
+    executor: docker-go-executor
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check linting
-          command: make verify-lint
+      - verify-pre-run
+      - run: make verify-lint
 
   verify-unit-tests:
-    docker:
-      - image: cimg/go:1.18.2
+    executor: docker-go-executor
+    parallelism: 5
     steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Check unit tests
-          command: make verify-test-unit
+      - verify-pre-run
+      - run: go test -v $(go list ./... | circleci tests split --split-by=timings)
 
 workflows:
   integration:
