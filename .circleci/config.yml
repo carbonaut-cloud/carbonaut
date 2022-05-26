@@ -11,6 +11,7 @@ executors:
   docker-go-executor:
     docker:
       - image: cimg/go:1.18.2
+    resource_class: small
 
 jobs:
   install:
