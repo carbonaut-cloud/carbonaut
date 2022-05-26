@@ -6,6 +6,7 @@
 [![Go Report Card](https://goreportcard.com/badge/carbonaut-cloud/carbonaut)](https://goreportcard.com/report/carbonaut-cloud/carbonaut)
 [![Coverage Status](https://coveralls.io/repos/github/carbonaut-cloud/carbonaut/badge.svg?branch=main)](https://coveralls.io/github/carbonaut-cloud/carbonaut?branch=main)
 [![Slack](https://img.shields.io/badge/Slack-%23general-blueviolet)](https://carbonautgroup.slack.com/archives/C03B9P2T3AB)
+[![CircleCI](https://circleci.com/gh/carbonaut-cloud/carbonaut/tree/main.svg?style=svg)](https://circleci.com/gh/carbonaut-cloud/carbonaut/tree/main)
 
 Carbonaut is a open source tool to measure your carbon emissions, analyze your resource consumptions and support you in optimizing your green house gas footprint.
 
