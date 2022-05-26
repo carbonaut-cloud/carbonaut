@@ -1,0 +1,83 @@
+version: 2.1
+
+jobs:
+  install:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install
+          command: make install
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+
+  verify-go-mod:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Check go mod
+          command: make verify-go-mod
+
+  verify-git:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Check git tree
+          command: make verify-git
+
+  verify-go-build:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Check go build
+          command: make verify-build
+
+  verify-linting:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Check linting
+          command: make verify-lint
+
+  verify-unit-tests:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Check unit tests
+          command: make verify-test-unit
+
+workflows:
+  integration:
+    jobs:
+      - install
+      - verify-go-mod:
+          requires: [install]
+      - verify-git:
+          requires: [install]
+      - verify-go-build:
+          requires: [install]
+      - verify-linting:
+          requires: [install]
+      - verify-unit-tests:
+          requires: [install]
