@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package provider
+package storage
 
 import (
 	"fmt"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/postgres"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/sqlite"
+	"carbonaut.cloud/carbonaut/pkg/data/methods"
+	"carbonaut.cloud/carbonaut/pkg/data/storage/postgres"
+	"carbonaut.cloud/carbonaut/pkg/data/storage/sqlite"
 )
 
 type Config struct {
-	Name           string `validate:"nonzero"`
+	ProviderName   string `default:"sqlite" validate:"regexp=^sqlite|postgres$"`
 	PostgresConfig postgres.Config
 	SqliteConfig   sqlite.Config
 }
@@ -34,7 +34,7 @@ type IProvider interface {
 }
 
 func ResolveProvider(c *Config) (IProvider, error) {
-	switch c.Name {
+	switch c.ProviderName {
 	case sqlite.Name:
 		if err := c.SqliteConfig.ValidateConfig(); err != nil {
 			return nil, err
@@ -46,6 +46,6 @@ func ResolveProvider(c *Config) (IProvider, error) {
 		}
 		return &c.PostgresConfig, nil
 	default:
-		return nil, fmt.Errorf("specified provider %s is not supported", c.Name)
+		return nil, fmt.Errorf("specified provider %s is not supported", c.ProviderName)
 	}
 }

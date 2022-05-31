@@ -16,38 +16,35 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"carbonaut.cloud/carbonaut/pkg/api"
 	"carbonaut.cloud/carbonaut/pkg/connector"
 	"carbonaut.cloud/carbonaut/pkg/data"
-	defaults "github.com/mcuadros/go-defaults"
+	"github.com/mcuadros/go-defaults"
 	"github.com/spf13/viper"
-	validator "gopkg.in/validator.v2"
+	"gopkg.in/validator.v2"
 )
 
 // configProvider define how the decode the provided configuration
 type configProvider string
 
 // FileConfigMedium The configuration gets provided by file
-const FileConfigMedium configProvider = "file"
+const (
+	FileConfigMedium    configProvider = "file"
+	DefaultConfigMedium configProvider = "default"
+)
 
 // NOTE: it would be possible to define remote kv-stores later that hold the configuration: https://github.com/spf13/viper#remote-keyvalue-store-support
 
 // Used to configure where to find the configuration file and how to parse it
 type GetCarbonautConfigIn struct {
-	ConfigMedium     configProvider `default:"file"`
-	ConfigMediumFile *FileMediumConfig
-}
-
-type FileMediumConfig struct {
-	FileName string `default:"carbonconfig"`
-	FileType string `default:"yaml"`
-	FilePath string
+	ConfigMedium configProvider `default:"default"`
+	FilePath     string         `default:"carbonconfig.yaml"`
 }
 
 // Entire carbonaut configuration file which is largely specified in sub structs
 type CarbonConfig struct {
-	Version  string `default:"v1"`
 	LogLevel string `default:"info" validate:"regexp=^info|debug|error|fatal|warning$"`
 
 	API       api.Config       `mapstructure:"api"`
@@ -62,7 +59,13 @@ func GetCarbonautConfig(in *GetCarbonautConfigIn) (*CarbonConfig, error) {
 	carbonConfig, err := func() (*CarbonConfig, error) {
 		switch in.ConfigMedium {
 		case FileConfigMedium:
-			return getFileConfiguration(in.ConfigMediumFile)
+			c, err := splitFilePathToPieces(in.FilePath)
+			if err != nil {
+				return nil, err
+			}
+			return getFileConfiguration(c)
+		case DefaultConfigMedium:
+			return &CarbonConfig{}, nil
 		default:
 			return nil, fmt.Errorf("config medium %s not supported", in.ConfigMedium)
 		}
@@ -81,8 +84,14 @@ func GetCarbonautConfig(in *GetCarbonautConfigIn) (*CarbonConfig, error) {
 	return carbonConfig, nil
 }
 
+type fileConfig struct {
+	FileName string
+	FileType string
+	FilePath string
+}
+
 // getFileConfiguration get the carbonaut configuration stored in a local file
-func getFileConfiguration(in *FileMediumConfig) (*CarbonConfig, error) {
+func getFileConfiguration(in *fileConfig) (*CarbonConfig, error) {
 	viper.SetConfigName(in.FileName)
 	viper.SetConfigType(in.FileType)
 	viper.AddConfigPath(in.FilePath)
@@ -100,4 +109,34 @@ func getFileConfiguration(in *FileMediumConfig) (*CarbonConfig, error) {
 	}
 
 	return &carbonConfig, nil
+}
+
+// This function is used to split a file path into pieces so its easier to process
+// "./my.db" -> FilePath: ".", FileName: "my", FileType: "db"
+func splitFilePathToPieces(filePath string) (*fileConfig, error) {
+	reverseString := func(s string) string {
+		runes := []rune(s)
+		for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+			runes[i], runes[j] = runes[j], runes[i]
+		}
+		return string(runes)
+	}
+	// split file type from string, reverse it to get last dot
+	// eg: "./my.db" -> ["bd", "ym/."]
+	splitFileTypeFromRest := strings.SplitN(reverseString(filePath), ".", 2)
+	if len(splitFileTypeFromRest) != 2 {
+		return nil, fmt.Errorf("could not find a file ending")
+	}
+	// split file path from file name
+	// eg: "ym/." -> ["ym", "."]
+	splitFileNameFromPath := strings.SplitN(splitFileTypeFromRest[1], "/", 2)
+	relativeFilePath := ""
+	if len(splitFileNameFromPath) == 2 {
+		relativeFilePath = reverseString(splitFileNameFromPath[1])
+	}
+	return &fileConfig{
+		FileType: reverseString(splitFileTypeFromRest[0]),
+		FileName: reverseString(splitFileNameFromPath[0]),
+		FilePath: relativeFilePath,
+	}, nil
 }

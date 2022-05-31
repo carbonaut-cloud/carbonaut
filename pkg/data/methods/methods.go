@@ -15,7 +15,7 @@
 package methods
 
 import (
-	"carbonaut.cloud/carbonaut/pkg/data/db/models"
+	"carbonaut.cloud/carbonaut/pkg/data/models"
 	"gorm.io/gorm"
 )
 

@@ -17,19 +17,18 @@ package postgres
 import (
 	"fmt"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	validator "gopkg.in/validator.v2"
+	"carbonaut.cloud/carbonaut/pkg/data/methods"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type Config struct {
-	Port         int    `default:"5432" validate:"nonzero"`
-	Password     string `validate:"nonzero"`
-	Host         string `default:"127.0.0.1" validate:"nonzero"`
-	User         string `validate:"nonzero"`
-	DatabaseName string `default:"postgres" validate:"nonzero"`
-	SSLMode      string `default:"disable" validate:"regexp=^disable|enable$"`
+	Port         int `default:"5432"`
+	Password     string
+	Host         string `default:"127.0.0.1"`
+	User         string
+	DatabaseName string `default:"postgres"`
+	SSLMode      string `default:"disable"`
 }
 
 const Name = "postgres"
@@ -60,9 +59,11 @@ func (c *Config) Connect() (methods.ICarbonDB, error) {
 }
 
 func (c *Config) ValidateConfig() error {
-	// validate input if `validate:xxx` is specified - see https://github.com/go-validator/validator
-	if err := validator.Validate(c); err != nil {
-		return fmt.Errorf("provided configuration is not valid, %v", err)
+	if c.DatabaseName == "" || c.Host == "" || c.Password == "" || c.User == "" || c.Port == 0 {
+		return fmt.Errorf("configuration invalid required parameters are not set")
+	}
+	if c.SSLMode != "enable" && c.SSLMode != "disable" && c.SSLMode != "" {
+		return fmt.Errorf("SSL Mode must match 'enable' or 'disable' key")
 	}
 	return nil
 }

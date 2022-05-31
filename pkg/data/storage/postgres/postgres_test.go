@@ -33,6 +33,14 @@ var negCfg = []Config{
 		DatabaseName: "postgres",
 		SSLMode:      "enable",
 	},
+	{
+		DatabaseName: "postgres-neg1",
+		Port:         5430,
+		Password:     "some-password",
+		Host:         "127.0.0.1",
+		User:         "test",
+		SSLMode:      "does-not-exist",
+	},
 }
 
 func TestConnectNeg(t *testing.T) {

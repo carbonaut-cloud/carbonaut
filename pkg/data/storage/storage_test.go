@@ -12,32 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package provider
+package storage
 
 import (
 	"fmt"
 	"testing"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/postgres"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/sqlite"
+	"carbonaut.cloud/carbonaut/pkg/data/storage/postgres"
+	"carbonaut.cloud/carbonaut/pkg/data/storage/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	negCfg = []Config{{
-		Name:         sqlite.Name,
-		SqliteConfig: sqlite.Config{DatabaseFileName: "testdata/does-not-exist-db"},
+		ProviderName: sqlite.Name,
+		SqliteConfig: sqlite.Config{FileName: "testdata/does-not-exist-db"},
 	}, {
-		Name: postgres.Name,
+		ProviderName: postgres.Name,
 	}, {
-		Name:         "does-not-exist-provider",
-		SqliteConfig: sqlite.Config{DatabaseFileName: "testdata/does-not-exist-db"},
+		ProviderName: "does-not-exist-provider",
+		SqliteConfig: sqlite.Config{FileName: "testdata/does-not-exist-db"},
 	}}
 	posCfg = []Config{{
-		Name:         sqlite.Name,
-		SqliteConfig: sqlite.Config{DatabaseFileName: "testdata/emptytest.db"},
+		ProviderName: sqlite.Name,
+		SqliteConfig: sqlite.Config{FileName: "testdata/emptytest.db"},
 	}, {
-		Name: postgres.Name,
+		ProviderName: postgres.Name,
 		PostgresConfig: postgres.Config{
 			Port:         5430,
 			Password:     "some-password",
@@ -52,15 +52,15 @@ var (
 func TestResolveProviderPos(t *testing.T) {
 	for i := range posCfg {
 		db, err := ResolveProvider(&posCfg[i])
-		assert.NoError(t, err, fmt.Sprintf("expected error for provider %s on execution %d", posCfg[i].Name, i))
-		assert.NotNil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", posCfg[i].Name, i))
+		assert.NoError(t, err, fmt.Sprintf("expected error for provider %s on execution %d", posCfg[i].ProviderName, i))
+		assert.NotNil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", posCfg[i].ProviderName, i))
 	}
 }
 
 func TestResolveProviderNeg(t *testing.T) {
 	for i := range negCfg {
 		db, err := ResolveProvider(&negCfg[i])
-		assert.Error(t, err, fmt.Sprintf("expected error for provider %s on execution %d", negCfg[i].Name, i))
-		assert.Nil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", negCfg[i].Name, i))
+		assert.Error(t, err, fmt.Sprintf("expected error for provider %s on execution %d", negCfg[i].ProviderName, i))
+		assert.Nil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", negCfg[i].ProviderName, i))
 	}
 }
