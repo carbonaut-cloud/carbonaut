@@ -15,12 +15,15 @@
 package cmd
 
 import (
-	"fmt"
-
+	"carbonaut.cloud/carbonaut/pkg/api"
+	"carbonaut.cloud/carbonaut/pkg/config"
+	"carbonaut.cloud/carbonaut/pkg/util"
+	"github.com/mcuadros/go-defaults"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-// TODO: initialize carbonaut deployments
+var cfg = config.GetCarbonautConfigIn{}
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -32,5 +35,25 @@ var deployCmd = &cobra.Command{
 
 // RunDeploy run cli command `carbonaut deploy``
 func RunDeploy() error {
-	return fmt.Errorf("deploy command is not implemented yet")
+	c, err := config.GetCarbonautConfig(&cfg)
+	if err != nil {
+		log.Err(err)
+		return err
+	}
+	a := api.CarbonautAPI{}
+	if err := a.Start(&c.API); err != nil {
+		log.Err(err)
+		return err
+	}
+	return nil
+}
+
+func init() {
+	l := util.GetLogger(&util.LogConfig{})
+	l.Info().Msg("Applying defaults to the configuration to look up the carbonaut config file")
+	defaults.SetDefaults(&cfg)
+	deployCmd.PersistentFlags().StringVarP(&cfg.FilePath, "config", "c", "", "Specify where to find the configuration file")
+	if cfg.FilePath != "" {
+		cfg.ConfigMedium = config.FileConfigMedium
+	}
 }

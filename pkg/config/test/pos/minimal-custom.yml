@@ -1,0 +1,6 @@
+loglevel: warning
+Data:
+  Storage:
+    ProviderName: sqlite
+    sqliteconfig:
+      databasefilename: my.db

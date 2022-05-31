@@ -19,14 +19,16 @@ import (
 	"fmt"
 	"os"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/methods"
-	validator "gopkg.in/validator.v2"
+	"carbonaut.cloud/carbonaut/pkg/data/methods"
+	"carbonaut.cloud/carbonaut/pkg/util"
+	"github.com/rs/zerolog/log"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type Config struct {
-	DatabaseFileName string `validate:"nonzero"`
+	FileName   string `default:"tmp.db"`
+	AutoCreate bool   `default:"true"`
 }
 
 const Name = "sqlite"
@@ -35,8 +37,18 @@ func (c *Config) Connect() (methods.ICarbonDB, error) {
 	if err := c.ValidateConfig(); err != nil {
 		return nil, err
 	}
+	// create an empty sqlite database file if it does not exist
+	if _, err := os.Stat(c.FileName); errors.Is(err, os.ErrNotExist) && c.AutoCreate {
+		log.Info().Msg("Local database file not found, auto create sqlite database file")
+		file, err := os.Create(c.FileName)
+		if err != nil {
+			return nil, err
+		}
+		file.Close()
+		log.Info().Msgf("Local database file %s created", c.FileName)
+	}
 	// open connection to db file
-	db, err := gorm.Open(sqlite.Open(c.DatabaseFileName), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(c.FileName), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
@@ -50,12 +62,17 @@ func (c *Config) Connect() (methods.ICarbonDB, error) {
 }
 
 func (c *Config) ValidateConfig() error {
-	// validate input if `validate:xxx` is specified - see https://github.com/go-validator/validator
-	if err := validator.Validate(c); err != nil {
-		return fmt.Errorf("provided configuration is not valid, %v", err)
+	if c.FileName == "" {
+		return fmt.Errorf("database filename is not set")
 	}
-	if _, err := os.Stat(c.DatabaseFileName); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(c.FileName); errors.Is(err, os.ErrNotExist) && !c.AutoCreate {
 		return err
 	}
 	return nil
+}
+
+func (c *Config) Destroy() {
+	if err := os.Remove(c.FileName); err != nil {
+		util.Log.Err(err)
+	}
 }

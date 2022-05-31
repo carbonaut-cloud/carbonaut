@@ -23,6 +23,7 @@ import (
 	"carbonaut.cloud/carbonaut/pkg/api/v1/config"
 	"carbonaut.cloud/carbonaut/pkg/api/v1/connector"
 	"carbonaut.cloud/carbonaut/pkg/api/v1/data"
+	"carbonaut.cloud/carbonaut/pkg/util"
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 )
@@ -34,7 +35,7 @@ type Config struct {
 	Port    int    `default:"3000"`
 }
 
-// all routes in subpackages
+// all routes in sub packages
 var routes = []models.IRoutes{
 	connector.Routes{},
 	config.Routes{},
@@ -51,6 +52,8 @@ type CarbonautAPI struct {
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func (a *CarbonautAPI) Start(c *Config) error {
+	log := util.Log
+	log.Info().Msg("Start Carbonaut API")
 	app := fiber.New()
 	a.app = app
 	v := app.Group(fmt.Sprintf("/api/%s", c.Version))
@@ -65,6 +68,7 @@ func (a *CarbonautAPI) Start(c *Config) error {
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})
+	log.Info().Msgf("Swagger endpoint: http://127.0.0.1:%d/api/%s/swagger/index.html", c.Port, c.Version)
 	if err := app.Listen(fmt.Sprintf(":%d", c.Port)); err != nil {
 		return err
 	}

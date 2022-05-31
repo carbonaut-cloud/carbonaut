@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package db
+package data
 
 import (
 	"fmt"
 	"testing"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider"
-	"carbonaut.cloud/carbonaut/pkg/data/db/provider/sqlite"
+	"carbonaut.cloud/carbonaut/pkg/data/storage"
+	"carbonaut.cloud/carbonaut/pkg/data/storage/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	negCfg = []Config{{
-		Provider: provider.Config{
-			Name: sqlite.Name,
+		Storage: storage.Config{
+			ProviderName: sqlite.Name,
 			SqliteConfig: sqlite.Config{
-				DatabaseFileName: "testdata/does-not-exist-db",
+				FileName: "testdata/does-not-exist-db",
 			},
 		},
 	}}
 	posCfg = []Config{{
-		Provider: provider.Config{
-			Name: sqlite.Name,
+		Storage: storage.Config{
+			ProviderName: sqlite.Name,
 			SqliteConfig: sqlite.Config{
-				DatabaseFileName: "testdata/emptytest.db",
+				FileName: "testdata/emptytest.db",
 			},
 		},
 	}}
@@ -45,15 +45,15 @@ var (
 func TestConnectNeg(t *testing.T) {
 	for i := range negCfg {
 		db, err := Connect(&negCfg[i])
-		assert.Error(t, err, fmt.Sprintf("expected error for provider %s on execution %d", negCfg[i].Provider.Name, i))
-		assert.Nil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", negCfg[i].Provider.Name, i))
+		assert.Error(t, err, fmt.Sprintf("expected error for provider %s on execution %d", negCfg[i].Storage.ProviderName, i))
+		assert.Nil(t, db, fmt.Sprintf("expected nil for provider %s on execution %d", negCfg[i].Storage.ProviderName, i))
 	}
 }
 
 func TestConnectPos(t *testing.T) {
 	for i := range posCfg {
 		db, err := Connect(&posCfg[i])
-		assert.NoError(t, err, fmt.Sprintf("no error expected for provider %s on execution %d", posCfg[i].Provider.Name, i))
-		assert.NotNil(t, db, fmt.Sprintf("not nil expected for provider %s on execution %d", posCfg[i].Provider.Name, i))
+		assert.NoError(t, err, fmt.Sprintf("no error expected for provider %s on execution %d", posCfg[i].Storage.ProviderName, i))
+		assert.NotNil(t, db, fmt.Sprintf("not nil expected for provider %s on execution %d", posCfg[i].Storage.ProviderName, i))
 	}
 }

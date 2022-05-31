@@ -12,14 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package exporter
+package data
 
-import "fmt"
+// A ORM library is used to connect to the database: see https://gorm.io/docs/
 
-type InExporter struct{}
+import (
+	"carbonaut.cloud/carbonaut/pkg/data/methods"
+	"carbonaut.cloud/carbonaut/pkg/data/storage"
+)
 
-type Exporter struct{}
+// Provider config gets dynamically set over the provider string specification
+type Config struct {
+	Storage storage.Config
+}
 
-func DataExporter(in *InExporter) (*Exporter, error) {
-	return nil, fmt.Errorf("DataExporter is not implemented yet")
+// establish a connection to the configured database
+func Connect(cfg *Config) (methods.ICarbonDB, error) {
+	p, err := storage.ResolveProvider(&cfg.Storage)
+	if err != nil {
+		return nil, err
+	}
+	return p.Connect()
 }

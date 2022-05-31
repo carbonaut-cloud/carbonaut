@@ -19,7 +19,7 @@ import (
 	"os"
 	"testing"
 
-	"carbonaut.cloud/carbonaut/pkg/data/db/models"
+	"carbonaut.cloud/carbonaut/pkg/data/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/sqlite"
