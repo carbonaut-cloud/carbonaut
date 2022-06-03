@@ -6,6 +6,7 @@ go 1.18
 
 require (
 	github.com/arsmn/fiber-swagger/v2 v2.31.1
+	github.com/gocarina/gocsv v0.0.0-20220531201732-5f969b02b902
 	github.com/gofiber/fiber/v2 v2.33.0
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/rs/zerolog v1.26.1

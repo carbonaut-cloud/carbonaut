@@ -13,3 +13,52 @@
 // limitations under the License.
 
 package gcp
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/gocarina/gocsv"
+)
+
+type Record struct {
+	UsageMonth            string `csv:"usage_month"`
+	BillingAccount        string `csv:"billing_account_id"`
+	ProjectNumber         string `csv:"project.number"`
+	ProjectID             string `csv:"project.id"`
+	ServiceID             string `csv:"service.id"`
+	ServiceDescription    string `csv:"service.description"`
+	LocationLocation      string `csv:"location.location"`
+	LocationRegion        string `csv:"location.region"`
+	CarbonFootprintKgCO2e string `csv:"carbon_footprint_kgCO2e"`
+	CarbonModelVersion    string `csv:"carbon_model_version"`
+}
+
+type Config struct{}
+
+func (c Config) ImportCsvFile(filepath string) ([]*Record, error) {
+	in, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer in.Close()
+
+	clients := []*Record{}
+
+	if err := gocsv.UnmarshalFile(in, &clients); err != nil {
+		return nil, err
+	}
+	return clients, nil
+}
+
+func (c Config) ImportCsv(data []byte) ([]*Record, error) {
+	clients := []*Record{}
+	if err := gocsv.UnmarshalBytes(data, &clients); err != nil {
+		return nil, err
+	}
+	return clients, nil
+}
+
+func (c Config) PullData() ([]byte, error) {
+	return nil, fmt.Errorf("not implemented yet")
+}
