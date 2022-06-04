@@ -30,14 +30,14 @@ const (
 )
 
 func TestImportCsvFilePos(t *testing.T) {
-	c := Config{}
+	c := implProvider{}
 	r, err := c.ImportCsvFile(testDataFile)
 	assert.NoError(t, err)
 	assert.Len(t, r, testDataFileLength)
 }
 
 func TestImportCsvFileNeg(t *testing.T) {
-	c := Config{}
+	c := implProvider{}
 	r, err := c.ImportCsvFile(doesNotExistTestdata)
 	assert.Error(t, err)
 	assert.Nil(t, r)
@@ -50,7 +50,7 @@ func TestImportCsvPos(t *testing.T) {
 	in, err := os.Open(testDataFile)
 	assert.NoError(t, err)
 	defer in.Close()
-	c := Config{}
+	c := implProvider{}
 	data, err := ioutil.ReadAll(in)
 	assert.NoError(t, err)
 	r, err := c.ImportCsv(data)
@@ -62,7 +62,7 @@ func TestImportCsvNeg(t *testing.T) {
 	in, err := os.Open(negTestFile)
 	assert.NoError(t, err)
 	defer in.Close()
-	c := Config{}
+	c := implProvider{}
 	data, err := ioutil.ReadAll(in)
 	assert.NoError(t, err)
 	r, err := c.ImportCsv(data)
@@ -71,8 +71,14 @@ func TestImportCsvNeg(t *testing.T) {
 }
 
 func TestPullDataNeg(t *testing.T) {
-	c := Config{}
+	c := implProvider{}
 	data, err := c.PullData()
 	assert.Error(t, err)
 	assert.Nil(t, data)
+}
+
+func TestReadToRecords(t *testing.T) {
+	r, err := readToRecords(testDataFile)
+	assert.NoError(t, err)
+	assert.Len(t, r, testDataFileLength)
 }

@@ -26,6 +26,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(dataCmd)
+	dataCmd.AddCommand(dataImportCmd)
 
 	rootCmd.AddCommand(deployCmd)
 	deployCmd.AddCommand(deployDescribeCmd)

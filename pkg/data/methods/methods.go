@@ -20,10 +20,10 @@ import (
 )
 
 type ICarbonDB interface {
-	Get(id uint) (*models.Emissions, error)
+	Get(id uint64) (*models.Emissions, error)
 	Save(emissions *models.Emissions) error
 	List(offset, limit int) ([]*models.Emissions, error)
-	Delete(id uint) error
+	Delete(id uint64) error
 	Migrate() error
 	SearchByResourceName(q string, offset, limit int) ([]*models.Emissions, error)
 }
@@ -33,11 +33,12 @@ type CarbonDB struct {
 }
 
 // initialize database struct
-func (d *CarbonDB) Init(db *gorm.DB) {
+func (d *CarbonDB) Init(db *gorm.DB) error {
 	d.db = db
+	return d.Migrate()
 }
 
-func (d CarbonDB) Get(id uint) (*models.Emissions, error) {
+func (d CarbonDB) Get(id uint64) (*models.Emissions, error) {
 	e := &models.Emissions{}
 	err := d.db.Where(`id = ?`, id).Find(e).Error
 	return e, err
@@ -53,7 +54,7 @@ func (d CarbonDB) List(offset, limit int) ([]*models.Emissions, error) {
 	return l, err
 }
 
-func (d CarbonDB) Delete(id uint) error {
+func (d CarbonDB) Delete(id uint64) error {
 	return d.db.Delete(&models.Emissions{ID: id}).Error
 }
 

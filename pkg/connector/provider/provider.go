@@ -12,6 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package translator
+package provider
 
-// TODO: code to specify methods that are needed to translate between CP data and the common data model scheme in carbonaut
+import "carbonaut.cloud/carbonaut/pkg/data/models"
+
+type (
+	Provider            string
+	ImplementedProvider struct {
+		Name    Provider
+		Methods CloudProvider
+	}
+)
+
+type Config struct{}
+
+type CloudProvider interface {
+	ImportCsvFile(filepath string) ([]*models.Emissions, error)
+	ImportCsv(data []byte) ([]*models.Emissions, error)
+	ExportAllToCsv() ([]byte, error)
+	PullData() ([]byte, error)
+	Connect() error
+	Status() (string, error)
+}

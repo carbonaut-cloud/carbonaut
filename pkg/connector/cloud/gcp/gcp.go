@@ -18,8 +18,17 @@ import (
 	"fmt"
 	"os"
 
+	"carbonaut.cloud/carbonaut/pkg/connector/provider"
+	"carbonaut.cloud/carbonaut/pkg/data/models"
 	"github.com/gocarina/gocsv"
 )
+
+type Config struct{}
+
+var Provider = provider.ImplementedProvider{
+	Name:    "gcp",
+	Methods: implProvider{},
+}
 
 type Record struct {
 	UsageMonth            string `csv:"usage_month"`
@@ -34,31 +43,57 @@ type Record struct {
 	CarbonModelVersion    string `csv:"carbon_model_version"`
 }
 
-type Config struct{}
+type implProvider struct{}
 
-func (c Config) ImportCsvFile(filepath string) ([]*Record, error) {
+func (p implProvider) ImportCsvFile(filepath string) ([]*models.Emissions, error) {
+	r, err := readToRecords(filepath)
+	if err != nil {
+		return nil, err
+	}
+	e, err := translateRecords(r)
+	if err != nil {
+		return nil, err
+	}
+	return e, nil
+}
+
+func (p implProvider) ImportCsv(data []byte) ([]*models.Emissions, error) {
+	clients := []*Record{}
+	if err := gocsv.UnmarshalBytes(data, &clients); err != nil {
+		return nil, err
+	}
+	e, err := translateRecords(clients)
+	if err != nil {
+		return nil, err
+	}
+	return e, nil
+}
+
+func (p implProvider) ExportAllToCsv() ([]byte, error) {
+	return nil, fmt.Errorf("not implemented yet")
+}
+
+func (p implProvider) PullData() ([]byte, error) {
+	return nil, fmt.Errorf("not implemented yet")
+}
+
+func (p implProvider) Connect() error {
+	return fmt.Errorf("not implemented yet")
+}
+
+func (p implProvider) Status() (string, error) {
+	return "", fmt.Errorf("not implemented yet")
+}
+
+func readToRecords(filepath string) ([]*Record, error) {
 	in, err := os.Open(filepath)
 	if err != nil {
 		return nil, err
 	}
 	defer in.Close()
-
-	clients := []*Record{}
-
-	if err := gocsv.UnmarshalFile(in, &clients); err != nil {
+	r := []*Record{}
+	if err := gocsv.UnmarshalFile(in, &r); err != nil {
 		return nil, err
 	}
-	return clients, nil
-}
-
-func (c Config) ImportCsv(data []byte) ([]*Record, error) {
-	clients := []*Record{}
-	if err := gocsv.UnmarshalBytes(data, &clients); err != nil {
-		return nil, err
-	}
-	return clients, nil
-}
-
-func (c Config) PullData() ([]byte, error) {
-	return nil, fmt.Errorf("not implemented yet")
+	return r, nil
 }

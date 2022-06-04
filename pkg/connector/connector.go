@@ -18,3 +18,7 @@ package connector
 // Config sets configuration file information that gets read by the pkg/config package
 // To set values in the configuration file use the path 'connector.version'.
 type Config struct{}
+
+// var providers = []provider.CloudProvider{}
+
+// func RunConnector(c Config) {}

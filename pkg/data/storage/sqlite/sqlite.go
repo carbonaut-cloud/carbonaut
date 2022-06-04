@@ -54,8 +54,8 @@ func (c *Config) Connect() (methods.ICarbonDB, error) {
 	}
 	// migrate tables
 	var carbonDB methods.CarbonDB
-	carbonDB.Init(db)
-	if err := carbonDB.Migrate(); err != nil {
+	// init db model and migrate tables
+	if err := carbonDB.Init(db); err != nil {
 		return nil, err
 	}
 	return carbonDB, nil
