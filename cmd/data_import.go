@@ -17,6 +17,7 @@ package cmd
 import (
 	"fmt"
 
+	"carbonaut.cloud/carbonaut/pkg/connector/cloud/gcp"
 	"github.com/spf13/cobra"
 )
 
@@ -25,13 +26,6 @@ var dataImportCmd = &cobra.Command{
 	Short:            "Import data into carbonaut",
 	SilenceUsage:     true,
 	TraverseChildren: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunDataImport()
-	},
-}
-
-func RunDataImport() error {
-	return fmt.Errorf("data import gcp command is not implemented yet")
 }
 
 func init() {
@@ -41,15 +35,15 @@ func init() {
 // GCP Import command
 
 var dataImportGcpCmd = &cobra.Command{
-	Use:              "gcp",
+	Use:              string(gcp.Provider.Name),
 	Short:            "Import GCP data into carbonaut",
 	SilenceUsage:     true,
 	TraverseChildren: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunDataImportGcp()
+		return RunDataImport(string(gcp.Provider.Name))
 	},
 }
 
-func RunDataImportGcp() error {
+func RunDataImport(provider string) error {
 	return fmt.Errorf("data import gcp command is not implemented yet")
 }

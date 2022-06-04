@@ -19,9 +19,12 @@ import (
 	"gorm.io/gorm"
 )
 
+const BatchSize = 10
+
 type ICarbonDB interface {
 	Get(id uint64) (*models.Emissions, error)
 	Save(emissions *models.Emissions) error
+	BatchSave(emissions []*models.Emissions) error
 	List(offset, limit int) ([]*models.Emissions, error)
 	Delete(id uint64) error
 	Migrate() error
@@ -45,6 +48,11 @@ func (d CarbonDB) Get(id uint64) (*models.Emissions, error) {
 }
 
 func (d CarbonDB) Save(emissions *models.Emissions) error {
+	return d.db.Save(emissions).Error
+}
+
+func (d CarbonDB) BatchSave(emissions []*models.Emissions) error {
+	d.db.CreateInBatches(emissions, BatchSize)
 	return d.db.Save(emissions).Error
 }
 

@@ -20,6 +20,7 @@ import (
 
 	"carbonaut.cloud/carbonaut/pkg/connector/provider"
 	"carbonaut.cloud/carbonaut/pkg/data/models"
+	"github.com/bxcodec/faker/v3"
 	"github.com/gocarina/gocsv"
 )
 
@@ -31,16 +32,16 @@ var Provider = provider.ImplementedProvider{
 }
 
 type Record struct {
-	UsageMonth            string `csv:"usage_month"`
+	UsageMonth            string `csv:"usage_month" faker:"oneof: 01/01/2001, 02/02/2002, 03/03/2003"`
 	BillingAccount        string `csv:"billing_account_id"`
 	ProjectNumber         string `csv:"project.number"`
 	ProjectID             string `csv:"project.id"`
 	ServiceID             string `csv:"service.id"`
 	ServiceDescription    string `csv:"service.description"`
-	LocationLocation      string `csv:"location.location"`
-	LocationRegion        string `csv:"location.region"`
-	CarbonFootprintKgCO2e string `csv:"carbon_footprint_kgCO2e"`
-	CarbonModelVersion    string `csv:"carbon_model_version"`
+	LocationLocation      string `csv:"location.location" faker:"oneof: us, eu, asia, africa"`
+	LocationRegion        string `csv:"location.region" faker:"oneof: us, eu, asia, africa"`
+	CarbonFootprintKgCO2e string `csv:"carbon_footprint_kgCO2e" faker:"oneof: 0.003, 0.004, 0.0001, 0.0003"`
+	CarbonModelVersion    string `csv:"carbon_model_version" faker:"oneof: 1, 2, 3"`
 }
 
 type implProvider struct{}
@@ -96,4 +97,10 @@ func readToRecords(filepath string) ([]*Record, error) {
 		return nil, err
 	}
 	return r, nil
+}
+
+func GetRecordTestData() (*Record, error) {
+	e := &Record{}
+	err := faker.FakeData(e)
+	return e, err
 }

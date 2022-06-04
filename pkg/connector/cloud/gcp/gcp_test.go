@@ -23,11 +23,16 @@ import (
 )
 
 const (
-	negTestFile          = "./testdata/not-a-csv.json"
+	negTestFile  = "./testdata/not-a-csv.json"
+	negTestFile2 = "./testdata/neg-gcp-carbon-data-extract-1.csv"
+	// includes correct and incorrect data
+	negTestFile3         = "./testdata/flake-gcp-carbon-data-extract-2.csv"
 	doesNotExistTestdata = "does-not-exist"
 	testDataFileLength   = 265
 	testDataFile         = "./testdata/gcp-carbon-data-extract-1.csv"
 )
+
+var negTestFiles = []string{negTestFile, negTestFile2, negTestFile3}
 
 func TestImportCsvFilePos(t *testing.T) {
 	c := implProvider{}
@@ -38,10 +43,12 @@ func TestImportCsvFilePos(t *testing.T) {
 
 func TestImportCsvFileNeg(t *testing.T) {
 	c := implProvider{}
+	for i := range negTestFiles {
+		r, err := c.ImportCsvFile(negTestFiles[i])
+		assert.Error(t, err)
+		assert.Nil(t, r)
+	}
 	r, err := c.ImportCsvFile(doesNotExistTestdata)
-	assert.Error(t, err)
-	assert.Nil(t, r)
-	r, err = c.ImportCsvFile(negTestFile)
 	assert.Error(t, err)
 	assert.Nil(t, r)
 }
@@ -59,15 +66,17 @@ func TestImportCsvPos(t *testing.T) {
 }
 
 func TestImportCsvNeg(t *testing.T) {
-	in, err := os.Open(negTestFile)
-	assert.NoError(t, err)
-	defer in.Close()
-	c := implProvider{}
-	data, err := ioutil.ReadAll(in)
-	assert.NoError(t, err)
-	r, err := c.ImportCsv(data)
-	assert.Error(t, err)
-	assert.Nil(t, r)
+	for i := range negTestFiles {
+		in, err := os.Open(negTestFiles[i])
+		assert.NoError(t, err)
+		defer in.Close()
+		c := implProvider{}
+		data, err := ioutil.ReadAll(in)
+		assert.NoError(t, err)
+		r, err := c.ImportCsv(data)
+		assert.Error(t, err)
+		assert.Nil(t, r)
+	}
 }
 
 func TestPullDataNeg(t *testing.T) {
@@ -77,8 +86,34 @@ func TestPullDataNeg(t *testing.T) {
 	assert.Nil(t, data)
 }
 
+func TestExportAllToCsvNeg(t *testing.T) {
+	c := implProvider{}
+	data, err := c.ExportAllToCsv()
+	assert.Error(t, err)
+	assert.Nil(t, data)
+}
+
+func TestConnectNeg(t *testing.T) {
+	c := implProvider{}
+	err := c.Connect()
+	assert.Error(t, err)
+}
+
+func TestStatusNeg(t *testing.T) {
+	c := implProvider{}
+	s, err := c.Status()
+	assert.Error(t, err)
+	assert.Empty(t, s)
+}
+
 func TestReadToRecords(t *testing.T) {
 	r, err := readToRecords(testDataFile)
 	assert.NoError(t, err)
 	assert.Len(t, r, testDataFileLength)
+}
+
+func TestGetRecordTestData(t *testing.T) {
+	e, err := GetRecordTestData()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, e)
 }

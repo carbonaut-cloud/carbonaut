@@ -45,3 +45,25 @@ func TestEmissionMarshalingPos(t *testing.T) {
 	assert.Equal(t, ePos.MTCO2e, e.MTCO2e)
 	assert.Equal(t, ePos.Provider, e.Provider)
 }
+
+func TestGetEmissionsTestDataPos(t *testing.T) {
+	e, err := GetEmissionsTestData()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, e.ID)
+}
+
+func TestGetEmissionsTestDataSetsPos(t *testing.T) {
+	posList := []int{0, 10, 100}
+	for i := range posList {
+		e, err := GetEmissionsTestDataSets(posList[i])
+		assert.NoError(t, err)
+		assert.Equal(t, posList[i], len(e))
+	}
+}
+
+func TestGetEmissionsTestDataSetsNeg(t *testing.T) {
+	posList := -1
+	e, err := GetEmissionsTestDataSets(posList)
+	assert.NoError(t, err)
+	assert.Empty(t, e)
+}

@@ -22,6 +22,8 @@ require (
 	gorm.io/gorm v1.23.5
 )
 
+require github.com/bxcodec/faker/v3 v3.8.0
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect

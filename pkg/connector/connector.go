@@ -14,11 +14,70 @@
 
 package connector
 
-// TODO: define Connector configuration options
-// Config sets configuration file information that gets read by the pkg/config package
-// To set values in the configuration file use the path 'connector.version'.
-type Config struct{}
+import (
+	"fmt"
 
-// var providers = []provider.CloudProvider{}
+	"carbonaut.cloud/carbonaut/pkg/connector/cloud/gcp"
+	"carbonaut.cloud/carbonaut/pkg/connector/provider"
+	"carbonaut.cloud/carbonaut/pkg/data/methods"
+)
 
-// func RunConnector(c Config) {}
+type Config struct {
+	Providers []provider.Config
+}
+
+//
+// Connect a cloud provider to carbonaut to pull data
+//
+
+// This function establishes a connection to the specified provider to pull data until the Connect func stops
+func Connect(c Config) error {
+	return fmt.Errorf("not implemented yet")
+}
+
+//
+// Import provider data into carbonaut
+//
+
+type (
+	ImportIn struct {
+		ProviderName provider.Name
+		ImportType   importType
+		FilePath     string
+		DB           methods.ICarbonDB
+	}
+	importType string
+)
+
+const FileImport = "file"
+
+var SupportedImportTypes = []importType{FileImport}
+
+func ImportData(in ImportIn) error {
+	p, err := getProvider(in.ProviderName)
+	if err != nil {
+		return err
+	}
+	switch in.ImportType {
+	case FileImport:
+		e, err := p.ImportCsvFile(in.FilePath)
+		if err != nil {
+			return err
+		}
+		if err := in.DB.BatchSave(e); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("could not resolve specified import type, supported import types: %v", SupportedImportTypes)
+	}
+	return nil
+}
+
+func getProvider(providerName provider.Name) (provider.CloudProvider, error) {
+	switch providerName {
+	case gcp.Provider.Name:
+		return gcp.Provider.Methods, nil
+	default:
+		return nil, fmt.Errorf("could not resolve specified provider")
+	}
+}

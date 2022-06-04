@@ -17,14 +17,17 @@ package provider
 import "carbonaut.cloud/carbonaut/pkg/data/models"
 
 type (
-	Provider            string
+	Name                string
 	ImplementedProvider struct {
-		Name    Provider
+		Name    Name
 		Methods CloudProvider
 	}
 )
 
-type Config struct{}
+type Config struct {
+	Provider  Name
+	AccountID string
+}
 
 type CloudProvider interface {
 	ImportCsvFile(filepath string) ([]*models.Emissions, error)

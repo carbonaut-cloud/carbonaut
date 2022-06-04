@@ -31,10 +31,10 @@ func TestDataCommand(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// func TestDeployCommand(t *testing.T) {
-// 	err := deployCmd.RunE(&cobra.Command{}, []string{})
-// 	assert.Error(t, err)
-// }
+func TestDataImportCommand(t *testing.T) {
+	err := dataImportGcpCmd.RunE(&cobra.Command{}, []string{})
+	assert.Error(t, err)
+}
 
 func TestDeployDescribeCommand(t *testing.T) {
 	err := deployDescribeCmd.RunE(&cobra.Command{}, []string{})

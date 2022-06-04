@@ -27,15 +27,26 @@ import (
 // func translateRecord(r *Record) (*models.Emissions, error)
 // func dateFormat(d string) time.Time
 
+var negRecords = []*Record{{}, {CarbonModelVersion: doesNotExistTestdata}, {
+	CarbonFootprintKgCO2e: doesNotExistTestdata,
+	CarbonModelVersion:    "1",
+}}
+
 func TestTranslateRecordPos(t *testing.T) {
-	r, err := readToRecords(testDataFile)
+	r, err := GetRecordTestData()
 	assert.NoError(t, err)
-	for i := range r {
-		e, err := translateRecord(r[i])
-		assert.NoError(t, err)
-		assert.NotNil(t, e)
-		// cross check one of the fields if the decoding succeeded
-		assert.Equal(t, dateFormat(r[i].UsageMonth), e.Timestamp)
+	e, err := translateRecord(r)
+	assert.NoError(t, err)
+	assert.NotNil(t, e)
+	// cross check one of the fields if the decoding succeeded
+	assert.Equal(t, dateFormat(r.UsageMonth), e.Timestamp)
+}
+
+func TestTranslateRecordNeg(t *testing.T) {
+	for i := range negRecords {
+		e, err := translateRecord(negRecords[i])
+		assert.Error(t, err)
+		assert.Nil(t, e)
 	}
 }
 
@@ -46,6 +57,12 @@ func TestTranslateRecordsPos(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, e)
 	assert.Equal(t, len(r), len(e))
+}
+
+func TestTranslateRecordsNeg(t *testing.T) {
+	e, err := translateRecords(negRecords)
+	assert.Error(t, err)
+	assert.Empty(t, e)
 }
 
 type dateTranslationData struct {
@@ -79,6 +96,9 @@ func TestDateFormatNeg(t *testing.T) {
 		{s: "", t: emptyDate},
 		{s: "01/012/022", t: emptyDate},
 		{s: "01/01/ABCD", t: emptyDate},
+		{s: "00/01/2022", t: emptyDate},
+		{s: "01/00/2022", t: emptyDate},
+		{s: "01/01/0000", t: emptyDate},
 	}
 	for _, d := range data {
 		decodedTime := dateFormat(d.s)

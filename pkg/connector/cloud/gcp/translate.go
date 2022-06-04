@@ -112,15 +112,15 @@ func dateFormat(d string) time.Time {
 		return emptyDate
 	}
 	year, err := strconv.Atoi(t[timestampYearGroup])
-	if err != nil || year < 0 {
+	if err != nil || year <= 0 {
 		return emptyDate
 	}
 	month, err := strconv.Atoi(t[timestampMonthGroup])
-	if err != nil || month < 0 {
+	if err != nil || month <= 0 {
 		return emptyDate
 	}
 	day, err := strconv.Atoi(t[timestampDayGroup])
-	if err != nil || day < 0 {
+	if err != nil || day <= 0 {
 		return emptyDate
 	}
 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, &time.Location{})
