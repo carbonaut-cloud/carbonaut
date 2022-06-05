@@ -73,10 +73,10 @@ workflows:
           requires: [install]
       - verify-go-build:
           requires: [install]
-          only: "main"
+          filters:
+            branches: 
+              only: /^main/
       - verify-linting:
           requires: [install]
       - verify-unit-tests:
-          requires: [install]
-      - docker-lint:
           requires: [install]
