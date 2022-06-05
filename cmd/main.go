@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+package main
 
 import (
 	"carbonaut.cloud/carbonaut/pkg/api"
@@ -20,40 +20,25 @@ import (
 	"carbonaut.cloud/carbonaut/pkg/util"
 	"github.com/mcuadros/go-defaults"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 var cfg = config.GetCarbonautConfigIn{}
 
-var deployCmd = &cobra.Command{
-	Use:   "deploy",
-	Short: "Deploy carbonaut",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return RunDeploy()
-	},
-}
-
-// RunDeploy run cli command `carbonaut deploy``
-func RunDeploy() error {
-	c, err := config.GetCarbonautConfig(&cfg)
-	if err != nil {
-		log.Err(err)
-		return err
-	}
-	a := api.CarbonautAPI{}
-	if err := a.Start(&c.API); err != nil {
-		log.Err(err)
-		return err
-	}
-	return nil
-}
-
-func init() {
+func main() {
 	l := util.GetLogger(&util.LogConfig{})
 	l.Info().Msg("Applying defaults to the configuration to look up the carbonaut config file")
 	defaults.SetDefaults(&cfg)
-	deployCmd.PersistentFlags().StringVarP(&cfg.FilePath, "config", "c", "", "Specify where to find the configuration file")
+	pflag.StringVarP(&cfg.FilePath, "config", "c", "", "Specify where to find the configuration file")
 	if cfg.FilePath != "" {
 		cfg.ConfigMedium = config.FileConfigMedium
+	}
+	c, err := config.GetCarbonautConfig(&cfg)
+	if err != nil {
+		log.Fatal().Err(err)
+	}
+	a := api.CarbonautAPI{}
+	if err := a.Start(&c.API); err != nil {
+		log.Fatal().Err(err)
 	}
 }

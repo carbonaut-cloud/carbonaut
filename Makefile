@@ -24,7 +24,7 @@ verify-test-unit:
 	./scripts/verify-test-go.sh
 
 verify-go-mod:
-	go vet
+	go vet ./...
 	go mod tidy -compat=1.18
 
 verify-git:
@@ -36,6 +36,8 @@ upgrade:
 install: 
 	# install swagger tool to compile swagger carbonaut api definition 
 	go install github.com/swaggo/swag/cmd/swag@v1.8.1
+	# install ko to build the carbonaut container image
+	go install github.com/google/ko@v0.11
 	go get ./...
 
 act:
