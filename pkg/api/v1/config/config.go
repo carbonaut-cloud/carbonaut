@@ -15,7 +15,7 @@
 package config
 
 import (
-	"carbonaut.cloud/carbonaut/pkg/api/models"
+	"carbonaut.cloud/carbonaut/pkg/api/routes"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -25,18 +25,39 @@ func (c Routes) GetPrefix() string {
 	return "config"
 }
 
-func (c Routes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
+func (c Routes) RouteSubGroups() []routes.IRoutes {
+	return []routes.IRoutes{}
 }
 
 func (c Routes) AddRoutes(r fiber.Router) {
-	r.Get("/*", helloConfigAPIHandler)
+	r.Post("/validate", validateHandler)
+	r.Get("/describe", describeHandler)
+	r.Put("/load", loadHandler)
 }
 
-// @description Dummy config API test
+// @description WIP, validate provided carbonaut configuration
 // @Success 200 {string} config
 // @Tags config
-// @Router /api/v1/config/ [get]
-func helloConfigAPIHandler(c *fiber.Ctx) error {
-	return c.SendString("config")
+// @Router /api/v1/config/validate [post]
+func validateHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
+}
+
+// @description WIP, describe current carbonaut configuration
+// @Success 200 {string} config
+// @Tags config
+// @Router /api/v1/config/describe [get]
+func describeHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
+}
+
+// @description WIP, update carbonaut configuration
+// @Success 200 {string} config
+// @Tags config
+// @Router /api/v1/config/load [put]
+func loadHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
 }

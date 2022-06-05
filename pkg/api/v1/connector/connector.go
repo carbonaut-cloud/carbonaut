@@ -15,7 +15,7 @@
 package connector
 
 import (
-	"carbonaut.cloud/carbonaut/pkg/api/models"
+	"carbonaut.cloud/carbonaut/pkg/api/routes"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -25,18 +25,66 @@ func (c Routes) GetPrefix() string {
 	return "connector"
 }
 
-func (c Routes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
+func (c Routes) RouteSubGroups() []routes.IRoutes {
+	return []routes.IRoutes{ConnectRoutes{}}
 }
 
 func (c Routes) AddRoutes(r fiber.Router) {
-	r.Get("/*", helloConnectorAPIHandler)
+	r.Get("/connections", connectionsHandler)
 }
 
-// @description Dummy connector API test
-// @Success 200 {string} connector
+// @description WIP, list carbonaut data provider connections
+// @Success 200 {string} config
 // @Tags connector
-// @Router /api/v1/connector/ [get]
-func helloConnectorAPIHandler(c *fiber.Ctx) error {
-	return c.SendString("connector")
+// @Router /api/v1/connector/connections [get]
+func connectionsHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
+}
+
+//
+// Connect
+//
+
+type ConnectRoutes struct{}
+
+func (c ConnectRoutes) GetPrefix() string {
+	return "connect"
+}
+
+func (c ConnectRoutes) RouteSubGroups() []routes.IRoutes {
+	return []routes.IRoutes{}
+}
+
+func (c ConnectRoutes) AddRoutes(r fiber.Router) {
+	r.Post("/aws", connectAwsHandler)
+	r.Post("/azure", connectAzureHandler)
+	r.Post("/gcp", connectGcpHandler)
+}
+
+// @description WIP, connect to aws data source
+// @Success 200 {string} config
+// @Tags connector
+// @Router /api/v1/connector/connect/aws [post]
+func connectAwsHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
+}
+
+// @description WIP, connect to azure data source
+// @Success 200 {string} config
+// @Tags connector
+// @Router /api/v1/connector/connect/azure [post]
+func connectAzureHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
+}
+
+// @description WIP, connect to gcp data source
+// @Success 200 {string} config
+// @Tags connector
+// @Router /api/v1/connector/connect/gcp [post]
+func connectGcpHandler(c *fiber.Ctx) error {
+	// TODO: not implemented
+	return c.SendString("wip, not implemented")
 }

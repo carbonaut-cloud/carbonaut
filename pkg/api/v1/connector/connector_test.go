@@ -18,13 +18,20 @@ import (
 	"fmt"
 	"testing"
 
+	"carbonaut.cloud/carbonaut/pkg/api/methods"
+	"carbonaut.cloud/carbonaut/pkg/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
 )
 
-func TestStartGracefullShudownPos(t *testing.T) {
+func TestRoutesPos(t *testing.T) {
+	// check if the routes can be connected without any error (this test does not test call api endpoints)
+	methods.RouteTesting(t, []routes.IRoutes{Routes{}})
+}
+
+func TestConnectorEndpointsPos(t *testing.T) {
 	app := fiber.New()
 	apiGroup := app.Group("api")
 	port, err := freeport.GetFreePort()
@@ -40,6 +47,12 @@ func TestStartGracefullShudownPos(t *testing.T) {
 		}
 	}()
 
-	err = helloConnectorAPIHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
+	err = connectAwsHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
+	assert.NoError(t, err)
+	err = connectAzureHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
+	assert.NoError(t, err)
+	err = connectGcpHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
+	assert.NoError(t, err)
+	err = connectionsHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
 	assert.NoError(t, err)
 }

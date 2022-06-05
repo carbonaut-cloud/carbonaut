@@ -38,7 +38,13 @@ build-podman:
 run-podman:
 	podman run -p 3000:3000 carbonaut:latest
 
-verify-docker-image:
+build-docker:
+	docker build -f Containerfile -t carbonaut:latest .
+
+run-docker:
+	docker run -p 3000:3000 carbonaut:latest
+
+verify-container-image:
 	trivy image carbonaut:latest
 
 upgrade:

@@ -14,12 +14,16 @@
 
 package api
 
+// The API uses fiber https://docs.gofiber.io/
+// To document the api properly the library https://github.com/swaggo/swag/ is used
+
 import (
 	"fmt"
 
 	// This is needed to initialize the swagger API
 	"carbonaut.cloud/carbonaut/docs"
-	"carbonaut.cloud/carbonaut/pkg/api/models"
+	"carbonaut.cloud/carbonaut/pkg/api/methods"
+	"carbonaut.cloud/carbonaut/pkg/api/routes"
 	"carbonaut.cloud/carbonaut/pkg/api/v1/config"
 	"carbonaut.cloud/carbonaut/pkg/api/v1/connector"
 	"carbonaut.cloud/carbonaut/pkg/api/v1/data"
@@ -35,8 +39,8 @@ type Config struct {
 	Port    int    `default:"3000"`
 }
 
-// all routes in sub packages
-var routes = []models.IRoutes{
+// all r in sub packages
+var r = []routes.IRoutes{
 	connector.Routes{},
 	config.Routes{},
 	data.Routes{},
@@ -63,7 +67,7 @@ func (a *CarbonautAPI) Start(c *Config) error {
 
 	addBasePathRoutes(v)
 	// Add routes to the API Server
-	addSubRoutes(routes, v)
+	methods.AddSubRoutes(r, v)
 	// Add a 404 Handler
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
@@ -80,21 +84,9 @@ func (a CarbonautAPI) Shutdown() error {
 	return a.app.Shutdown()
 }
 
-func addSubRoutes(routes []models.IRoutes, routeGroup fiber.Router) {
-	// if there aren't any routes left break
-	if len(routes) == 0 {
-		return
-	}
-	subGroup := routeGroup.Group(routes[0].GetPrefix())
-	routes[0].AddRoutes(subGroup)
-	// recursion to add routes of subgroups (e.g. api/v1/data/db)
-	addSubRoutes(routes[0].RouteSubGroups(), subGroup)
-	// remove first element from the list
-	addSubRoutes(append(routes[:0], routes[1:]...), routeGroup)
-}
-
 func addBasePathRoutes(r fiber.Router) {
 	r.Get("/status", statusHandler)
+	r.Post("/init", initHandler)
 	// host a add swagger web UI
 	r.Get("/swagger/*", swagger.HandlerDefault)
 }
@@ -106,4 +98,11 @@ const statusOK = "Carbonaut API is running!"
 // @Router /api/v1/status/ [get]
 func statusHandler(c *fiber.Ctx) error {
 	return c.SendString(statusOK)
+}
+
+// @description Initialize carbonaut to be fully functional
+// @Success 200 {string} Carbonaut initialized!
+// @Router /api/v1/init [post]
+func initHandler(c *fiber.Ctx) error {
+	return c.SendString("wip, not implemented")
 }
