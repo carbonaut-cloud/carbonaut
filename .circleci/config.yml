@@ -15,6 +15,8 @@ executors:
     resource_class: medium
 
 jobs:
+  #
+  # INSTALL / SETUP
   install:
     executor: docker-go-executor
     steps:
@@ -28,6 +30,8 @@ jobs:
           paths:
             - "/go/pkg/mod"
 
+  #
+  # VERIFY
   verify-go-mod:
     executor: docker-go-executor
     steps:
@@ -69,7 +73,10 @@ workflows:
           requires: [install]
       - verify-go-build:
           requires: [install]
+          only: "main"
       - verify-linting:
           requires: [install]
       - verify-unit-tests:
+          requires: [install]
+      - docker-lint:
           requires: [install]
