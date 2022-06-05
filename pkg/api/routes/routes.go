@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package gcp
+package routes
 
-// TODO: translate gcp data to unified carbonaut data schema (implement spec connector/translator.go)
+import "github.com/gofiber/fiber/v2"
+
+type IRoutes interface {
+	AddRoutes(r fiber.Router)
+	RouteSubGroups() []IRoutes
+	GetPrefix() string
+}

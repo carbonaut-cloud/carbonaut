@@ -21,10 +21,9 @@ import (
 	"testing"
 	"time"
 
-	"carbonaut.cloud/carbonaut/pkg/api/models"
-	"github.com/gofiber/fiber/v2"
 	"github.com/phayes/freeport"
 	"github.com/stretchr/testify/assert"
+	"github.com/valyala/fasthttp"
 )
 
 func verifyGetResponse(t *testing.T, p int, route, expectedBodyResult string) {
@@ -33,174 +32,6 @@ func verifyGetResponse(t *testing.T, p int, route, expectedBodyResult string) {
 	respBarBody, err := ioutil.ReadAll(respBar.Body)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedBodyResult, string(respBarBody))
-}
-
-// Test that the routes are getting initialized right
-func TestAddSubRoutes(t *testing.T) {
-	port, err := freeport.GetFreePort()
-	assert.NoError(t, err, "could not find a free port")
-	app := fiber.New()
-	addSubRoutes([]models.IRoutes{barRoutes{}, gooRoutes{}, aRoutes{}}, app)
-	go func() {
-		err := app.Listen(fmt.Sprintf(":%d", port))
-		assert.NoError(t, err)
-	}()
-	time.Sleep(time.Millisecond * 20)
-
-	// To test this a test api is getting build up
-	// Structure:
-	// 	GET bar/ -> "bar"
-	// 	GET bar/foo -> "foo"
-	// 	GET goo/ -> "goo"
-	// 	GET a/ -> "a"
-	// 	GET a/b -> "b"
-	// 	GET a/b/c -> "c"
-	// 	GET a/b/d -> "d"
-	// 	GET a/e -> "e"
-	routeStructure := map[string]string{
-		"bar":     "bar",
-		"bar/foo": "foo",
-		"goo":     "goo",
-		"a":       "a",
-		"a/b":     "b",
-		"a/b/c":   "c",
-		"a/b/d":   "d",
-		"a/e":     "e",
-	}
-
-	for route, expectedResponse := range routeStructure {
-		verifyGetResponse(t, port, route, expectedResponse)
-	}
-}
-
-// Build API to test if routes are getting build correct
-
-type barRoutes struct{}
-
-func (c barRoutes) GetPrefix() string {
-	return "bar"
-}
-
-func (c barRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{fooRoutes{}}
-}
-
-func (c barRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("bar")
-	})
-}
-
-type fooRoutes struct{}
-
-func (c fooRoutes) GetPrefix() string {
-	return "foo"
-}
-
-func (c fooRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
-}
-
-func (c fooRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("foo")
-	})
-}
-
-type gooRoutes struct{}
-
-func (c gooRoutes) GetPrefix() string {
-	return "goo"
-}
-
-func (c gooRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
-}
-
-func (c gooRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("goo")
-	})
-}
-
-type aRoutes struct{}
-
-func (c aRoutes) GetPrefix() string {
-	return "a"
-}
-
-func (c aRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{bRoutes{}, eRoutes{}}
-}
-
-func (c aRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("a")
-	})
-}
-
-type bRoutes struct{}
-
-func (c bRoutes) GetPrefix() string {
-	return "b"
-}
-
-func (c bRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{cRoutes{}, dRoutes{}}
-}
-
-func (c bRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("b")
-	})
-}
-
-type cRoutes struct{}
-
-func (c cRoutes) GetPrefix() string {
-	return "c"
-}
-
-func (c cRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
-}
-
-func (c cRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("c")
-	})
-}
-
-type dRoutes struct{}
-
-func (c dRoutes) GetPrefix() string {
-	return "d"
-}
-
-func (c dRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
-}
-
-func (c dRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("d")
-	})
-}
-
-type eRoutes struct{}
-
-func (c eRoutes) GetPrefix() string {
-	return "e"
-}
-
-func (c eRoutes) RouteSubGroups() []models.IRoutes {
-	return []models.IRoutes{}
-}
-
-func (c eRoutes) AddRoutes(r fiber.Router) {
-	r.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("e")
-	})
 }
 
 // test if the carbonaut api gets started without any errors
@@ -221,6 +52,10 @@ func TestStartPos(t *testing.T) {
 		go func(c Config) {
 			api := CarbonautAPI{}
 			err := api.Start(&c)
+			assert.NoError(t, err)
+			err = initHandler(api.app.AcquireCtx(&fasthttp.RequestCtx{}))
+			assert.NoError(t, err)
+			err = statusHandler(api.app.AcquireCtx(&fasthttp.RequestCtx{}))
 			assert.NoError(t, err)
 		}(c)
 		time.Sleep(time.Millisecond * 50)
@@ -277,7 +112,7 @@ func TestStartPortBlockedNeg(t *testing.T) {
 	}(c)
 }
 
-func TestStartGracefullShudownPos(t *testing.T) {
+func TestStartGracefullyShutdownPos(t *testing.T) {
 	port, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
 	c := Config{

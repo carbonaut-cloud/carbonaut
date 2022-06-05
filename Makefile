@@ -24,11 +24,28 @@ verify-test-unit:
 	./scripts/verify-test-go.sh
 
 verify-go-mod:
-	go vet
+	go vet ./...
 	go mod tidy -compat=1.18
 
 verify-git:
 	git diff --exit-code
+
+#
+
+build-podman:
+	podman build -f Containerfile -t carbonaut:latest .
+
+run-podman:
+	podman run -p 3000:3000 carbonaut:latest
+
+build-docker:
+	docker build -f Containerfile -t carbonaut:latest .
+
+run-docker:
+	docker run -p 3000:3000 carbonaut:latest
+
+verify-container-image:
+	trivy image carbonaut:latest
 
 upgrade:
 	go get -u -t ./...
@@ -37,10 +54,6 @@ install:
 	# install swagger tool to compile swagger carbonaut api definition 
 	go install github.com/swaggo/swag/cmd/swag@v1.8.1
 	go get ./...
-
-act:
-	echo "make sure to start docker and install the tool act to run github actions locally"
-	act -j verify
 
 swag:
 	swag init --dir "./pkg/api/,./pkg/api/v1/data"

@@ -28,7 +28,6 @@ import (
 
 type CarbonDBTestSuite struct {
 	suite.Suite
-	DB                *gorm.DB
 	carbonautDB       ICarbonDB
 	dbDestinationFile string
 }
@@ -40,8 +39,8 @@ func TestCarbonDB(t *testing.T) {
 
 // SetupTest gets called automatically before each test of the suite to setup the test environment
 func (s *CarbonDBTestSuite) SetupTest() {
-	sourceFile := "testdata/emptytest.db"
-	destinationFile := "testdata/emptytest2.db"
+	sourceFile := "testdata/empty.db"
+	destinationFile := "testdata/empty2.db"
 	// copy file from source to target destination, clean testing file
 	input, err := ioutil.ReadFile(sourceFile)
 	assert.NoError(s.T(), err)
@@ -49,8 +48,9 @@ func (s *CarbonDBTestSuite) SetupTest() {
 	assert.NoError(s.T(), err)
 
 	db, err := gorm.Open(sqlite.Open(destinationFile), &gorm.Config{})
+	assert.NoError(s.T(), err)
 	var carbonDB CarbonDB
-	carbonDB.Init(db)
+	err = carbonDB.Init(db)
 	assert.NoError(s.T(), err)
 
 	s.dbDestinationFile = destinationFile
@@ -65,33 +65,32 @@ func (s *CarbonDBTestSuite) AfterTest(_, _ string) {
 
 // mock test: Get(id uint) (*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBGet() {
-	e := models.Emissions{
-		ID:            1,
-		ResourceName:  "somename",
-		ResourceOwner: "user",
-		MTCO2e:        0.2,
-	}
-
-	_, err := s.carbonautDB.Get(e.ID)
+	e, err := models.GetEmissionsTestData()
 	assert.NoError(s.T(), err)
+	emissionsRetrieved, err := s.carbonautDB.Get(e.ID)
+	assert.NoError(s.T(), err)
+	assert.Empty(s.T(), emissionsRetrieved)
 }
 
 // mock test: Delete(id uint) error
 func (s *CarbonDBTestSuite) TestCarbonDBDelete() {
-	e := models.Emissions{
-		ID:            1,
-		ResourceName:  "somename",
-		ResourceOwner: "user",
-		MTCO2e:        0.2,
-	}
-
-	err := s.carbonautDB.Delete(e.ID)
+	e, err := models.GetEmissionsTestData()
+	assert.NoError(s.T(), err)
+	err = s.carbonautDB.Delete(e.ID)
 	assert.NoError(s.T(), err)
 }
 
 // mock test: List(offset, limit int) ([]*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBList() {
 	_, err := s.carbonautDB.List(0, 10)
+	assert.NoError(s.T(), err)
+}
+
+// mock test: BatchSave(emissions []*models.Emissions) error
+func (s *CarbonDBTestSuite) TestBatchSave() {
+	e, err := models.GetEmissionsTestDataSets(20)
+	assert.NoError(s.T(), err)
+	err = s.carbonautDB.BatchSave(e)
 	assert.NoError(s.T(), err)
 }
 
@@ -103,26 +102,16 @@ func (s *CarbonDBTestSuite) TestCarbonDBMigrate() {
 
 // mock test: SearchByResourceName(q string, offset, limit int) ([]*Emissions, error)
 func (s *CarbonDBTestSuite) TestCarbonDBSearchByResourceName() {
-	e := models.Emissions{
-		ID:            1,
-		ResourceName:  "somename",
-		ResourceOwner: "user",
-		MTCO2e:        0.2,
-	}
-
-	_, err := s.carbonautDB.SearchByResourceName(e.ResourceName, 1, 10)
+	e, err := models.GetEmissionsTestData()
+	assert.NoError(s.T(), err)
+	_, err = s.carbonautDB.SearchByResourceName(e.ResourceName, 1, 10)
 	assert.NoError(s.T(), err)
 }
 
 // mock test: Save(emissions *Emissions) error
 func (s *CarbonDBTestSuite) TestCarbonDBSave() {
-	e := models.Emissions{
-		ID:            1,
-		ResourceName:  "somename",
-		ResourceOwner: "user",
-		MTCO2e:        0.2,
-	}
-
-	err := s.carbonautDB.Save(&e)
+	e, err := models.GetEmissionsTestData()
+	assert.NoError(s.T(), err)
+	err = s.carbonautDB.Save(e)
 	assert.NoError(s.T(), err)
 }

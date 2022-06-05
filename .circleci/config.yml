@@ -11,9 +11,12 @@ executors:
   docker-go-executor:
     docker:
       - image: cimg/go:1.18.2
-    resource_class: small
+    # https://circleci.com/docs/2.0/configuration-reference/#docker-executor
+    resource_class: medium
 
 jobs:
+  #
+  # INSTALL / SETUP
   install:
     executor: docker-go-executor
     steps:
@@ -27,6 +30,8 @@ jobs:
           paths:
             - "/go/pkg/mod"
 
+  #
+  # VERIFY
   verify-go-mod:
     executor: docker-go-executor
     steps:
@@ -68,6 +73,9 @@ workflows:
           requires: [install]
       - verify-go-build:
           requires: [install]
+          filters:
+            branches: 
+              only: /^main/
       - verify-linting:
           requires: [install]
       - verify-unit-tests:

@@ -14,12 +14,52 @@
 
 package models
 
+import (
+	"encoding/json"
+	"time"
+
+	"github.com/bxcodec/faker/v3"
+)
+
 // Emissions define data models
 type Emissions struct {
-	ID            uint    `gorm:"primarykey" json:"id"`
-	ResourceName  string  `gorm:"column:resource_name" json:"resource_name"`
-	ResourceOwner string  `gorm:"column:resource_owner" json:"resource_owner"`
-	ResourceType  string  `gorm:"column:resource_type" json:"resource_type"`
-	Provider      string  `gorm:"column:provider" json:"provider"`
-	MTCO2e        float32 `gorm:"column:mtco2e" json:"mtco2e"`
+	ID              uint64    `gorm:"primarykey;autoIncrement:true" json:"id"`
+	ResourceName    string    `gorm:"column:resource_name" json:"resource_name" faker:"oneof: ec2, eks, s3, ses, sns, sqs, rds, ecs, vpc"`
+	ResourceOwner   string    `gorm:"column:resource_owner" json:"resource_owner" faker:"name"`
+	ResourceType    string    `gorm:"column:resource_type" json:"resource_type" faker:"oneof: compute, network, ml, serverless, db, api, security"`
+	Provider        string    `gorm:"column:provider" json:"provider" faker:"oneof: gcp, aws, azure, kubernetes"`
+	MTCO2e          float64   `gorm:"column:mtco2e" json:"mtco2e" faker:"boundary_start=0.00001, boundary_end=0.1"`
+	Location        string    `gorm:"column:location" json:"location" faker:"oneof: us, eu, asia, africa"`
+	ProviderVersion int       `gorm:"column:provider_version" json:"provider_version"`
+	Timestamp       time.Time `gorm:"column:timestamp" json:"timestamp"`
+	CreatedAt       time.Time `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt       time.Time `gorm:"column:updated_at" json:"updated_at"`
+}
+
+func (e *Emissions) Marshal() ([]byte, error) {
+	return json.Marshal(e)
+}
+
+func UnmarshalEmissions(data []byte) (Emissions, error) {
+	var e Emissions
+	err := json.Unmarshal(data, &e)
+	return e, err
+}
+
+func GetEmissionsTestDataSets(n int) ([]*Emissions, error) {
+	e := []*Emissions{}
+	for i := 0; i < n; i++ {
+		emission, err := GetEmissionsTestData()
+		if err != nil {
+			return nil, err
+		}
+		e = append(e, emission)
+	}
+	return e, nil
+}
+
+func GetEmissionsTestData() (*Emissions, error) {
+	e := &Emissions{}
+	err := faker.FakeData(e)
+	return e, err
 }

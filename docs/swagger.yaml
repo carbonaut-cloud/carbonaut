@@ -7,9 +7,9 @@ info:
   title: Carbonaut API
   version: 0.0.1
 paths:
-  /api/v1/config/:
+  /api/v1/config/describe:
     get:
-      description: Dummy config API test
+      description: WIP, describe current carbonaut configuration
       responses:
         "200":
           description: OK
@@ -17,9 +17,29 @@ paths:
             type: string
       tags:
       - config
-  /api/v1/connector/:
-    get:
-      description: Dummy connector API test
+  /api/v1/config/load:
+    put:
+      description: WIP, update carbonaut configuration
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - config
+  /api/v1/config/validate:
+    post:
+      description: WIP, validate provided carbonaut configuration
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - config
+  /api/v1/connector/connect/aws:
+    post:
+      description: WIP, connect to aws data source
       responses:
         "200":
           description: OK
@@ -27,9 +47,39 @@ paths:
             type: string
       tags:
       - connector
-  /api/v1/data/:
+  /api/v1/connector/connect/azure:
+    post:
+      description: WIP, connect to azure data source
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - connector
+  /api/v1/connector/connect/gcp:
+    post:
+      description: WIP, connect to gcp data source
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - connector
+  /api/v1/connector/connections:
     get:
-      description: Dummy data API test
+      description: WIP, list carbonaut data provider connections
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - connector
+  /api/v1/data/export:
+    get:
+      description: Export carbonaut data
       responses:
         "200":
           description: OK
@@ -37,6 +87,69 @@ paths:
             type: string
       tags:
       - data
+  /api/v1/data/import/csv:
+    post:
+      consumes:
+      - text/plain
+      description: Import data in a csv file to carbonaut
+      parameters:
+      - description: Used to match provided data format to provider
+        in: query
+        name: provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - data
+  /api/v1/data/import/raw:
+    post:
+      consumes:
+      - text/plain
+      description: Import raw bytes of provider data to carbonaut
+      parameters:
+      - description: Used to match provided data format to provider
+        in: query
+        name: provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - data
+  /api/v1/data/storage:
+    get:
+      description: Describe carbonaut storage connection
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - data
+    post:
+      description: Configure a connection to storage
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      tags:
+      - data
+  /api/v1/init:
+    post:
+      description: Initialize carbonaut to be fully functional
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
   /api/v1/status/:
     get:
       description: Carbonaut Status Endpoint

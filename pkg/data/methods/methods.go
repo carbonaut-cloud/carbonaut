@@ -19,11 +19,14 @@ import (
 	"gorm.io/gorm"
 )
 
+const BatchSize = 10
+
 type ICarbonDB interface {
-	Get(id uint) (*models.Emissions, error)
+	Get(id uint64) (*models.Emissions, error)
 	Save(emissions *models.Emissions) error
+	BatchSave(emissions []*models.Emissions) error
 	List(offset, limit int) ([]*models.Emissions, error)
-	Delete(id uint) error
+	Delete(id uint64) error
 	Migrate() error
 	SearchByResourceName(q string, offset, limit int) ([]*models.Emissions, error)
 }
@@ -33,11 +36,12 @@ type CarbonDB struct {
 }
 
 // initialize database struct
-func (d *CarbonDB) Init(db *gorm.DB) {
+func (d *CarbonDB) Init(db *gorm.DB) error {
 	d.db = db
+	return d.Migrate()
 }
 
-func (d CarbonDB) Get(id uint) (*models.Emissions, error) {
+func (d CarbonDB) Get(id uint64) (*models.Emissions, error) {
 	e := &models.Emissions{}
 	err := d.db.Where(`id = ?`, id).Find(e).Error
 	return e, err
@@ -47,13 +51,18 @@ func (d CarbonDB) Save(emissions *models.Emissions) error {
 	return d.db.Save(emissions).Error
 }
 
+func (d CarbonDB) BatchSave(emissions []*models.Emissions) error {
+	d.db.CreateInBatches(emissions, BatchSize)
+	return d.db.Save(emissions).Error
+}
+
 func (d CarbonDB) List(offset, limit int) ([]*models.Emissions, error) {
 	var l []*models.Emissions
 	err := d.db.Offset(offset).Limit(limit).Find(&l).Error
 	return l, err
 }
 
-func (d CarbonDB) Delete(id uint) error {
+func (d CarbonDB) Delete(id uint64) error {
 	return d.db.Delete(&models.Emissions{ID: id}).Error
 }
 

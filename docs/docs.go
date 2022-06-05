@@ -20,9 +20,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/config/": {
+        "/api/v1/config/describe": {
             "get": {
-                "description": "Dummy config API test",
+                "description": "WIP, describe current carbonaut configuration",
                 "tags": [
                     "config"
                 ],
@@ -36,9 +36,41 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/connector/": {
-            "get": {
-                "description": "Dummy connector API test",
+        "/api/v1/config/load": {
+            "put": {
+                "description": "WIP, update carbonaut configuration",
+                "tags": [
+                    "config"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/config/validate": {
+            "post": {
+                "description": "WIP, validate provided carbonaut configuration",
+                "tags": [
+                    "config"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/connector/connect/aws": {
+            "post": {
+                "description": "WIP, connect to aws data source",
                 "tags": [
                     "connector"
                 ],
@@ -52,12 +84,159 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/data/": {
+        "/api/v1/connector/connect/azure": {
+            "post": {
+                "description": "WIP, connect to azure data source",
+                "tags": [
+                    "connector"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/connector/connect/gcp": {
+            "post": {
+                "description": "WIP, connect to gcp data source",
+                "tags": [
+                    "connector"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/connector/connections": {
             "get": {
-                "description": "Dummy data API test",
+                "description": "WIP, list carbonaut data provider connections",
+                "tags": [
+                    "connector"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/data/export": {
+            "get": {
+                "description": "Export carbonaut data",
                 "tags": [
                     "data"
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/data/import/csv": {
+            "post": {
+                "description": "Import data in a csv file to carbonaut",
+                "consumes": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Used to match provided data format to provider",
+                        "name": "provider",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/data/import/raw": {
+            "post": {
+                "description": "Import raw bytes of provider data to carbonaut",
+                "consumes": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "data"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Used to match provided data format to provider",
+                        "name": "provider",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/data/storage": {
+            "get": {
+                "description": "Describe carbonaut storage connection",
+                "tags": [
+                    "data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Configure a connection to storage",
+                "tags": [
+                    "data"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/init": {
+            "post": {
+                "description": "Initialize carbonaut to be fully functional",
                 "responses": {
                     "200": {
                         "description": "OK",
