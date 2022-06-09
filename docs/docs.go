@@ -150,35 +150,7 @@ const docTemplate = `{
         },
         "/api/v1/data/import/csv": {
             "post": {
-                "description": "Import data in a csv file to carbonaut",
-                "consumes": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "data"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Used to match provided data format to provider",
-                        "name": "provider",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/data/import/raw": {
-            "post": {
-                "description": "Import raw bytes of provider data to carbonaut",
+                "description": "Import csv raw bytes of provider data to carbonaut",
                 "consumes": [
                     "text/plain"
                 ],

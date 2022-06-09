@@ -91,25 +91,7 @@ paths:
     post:
       consumes:
       - text/plain
-      description: Import data in a csv file to carbonaut
-      parameters:
-      - description: Used to match provided data format to provider
-        in: query
-        name: provider
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      tags:
-      - data
-  /api/v1/data/import/raw:
-    post:
-      consumes:
-      - text/plain
-      description: Import raw bytes of provider data to carbonaut
+      description: Import csv raw bytes of provider data to carbonaut
       parameters:
       - description: Used to match provided data format to provider
         in: query

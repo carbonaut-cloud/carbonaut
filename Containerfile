@@ -14,7 +14,7 @@ RUN go build -o /carbonaut cmd/main.go
 ##
 ## Deploy
 ##
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/base
 
 WORKDIR /
 

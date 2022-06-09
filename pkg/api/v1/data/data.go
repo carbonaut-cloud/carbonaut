@@ -71,28 +71,16 @@ func (c ImportRoutes) RouteSubGroups() []routes.IRoutes {
 const importProvider = "provider"
 
 func (c ImportRoutes) AddRoutes(r fiber.Router) {
-	r.Post(fmt.Sprintf("/raw/:%s?", importProvider), importRawDataHandler)
-	r.Post(fmt.Sprintf("/csv/:%s?", importProvider), importCsvFileDataHandler)
+	r.Post(fmt.Sprintf("/csv/:%s?", importProvider), importCsvDataHandler)
 }
 
-// @description Import raw bytes of provider data to carbonaut
-// @Success 200 {string} data
-// @Tags data
-// @Param provider query string true "Used to match provided data format to provider"
-// @Router /api/v1/data/import/raw [post]
-// @Accept plain
-func importRawDataHandler(c *fiber.Ctx) error {
-	// TODO: not implemented
-	return c.SendString("wip, not implemented")
-}
-
-// @description Import data in a csv file to carbonaut
+// @description Import csv raw bytes of provider data to carbonaut
 // @Success 200 {string} data
 // @Tags data
 // @Param provider query string true "Used to match provided data format to provider"
 // @Router /api/v1/data/import/csv [post]
 // @Accept plain
-func importCsvFileDataHandler(c *fiber.Ctx) error {
+func importCsvDataHandler(c *fiber.Ctx) error {
 	// TODO: not implemented
 	return c.SendString("wip, not implemented")
 }

@@ -47,9 +47,7 @@ func TestDataEndpointsPos(t *testing.T) {
 		}
 	}()
 
-	err = importRawDataHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
-	assert.NoError(t, err)
-	err = importCsvFileDataHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
+	err = importCsvDataHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
 	assert.NoError(t, err)
 	err = exportDataHandler(app.AcquireCtx(&fasthttp.RequestCtx{}))
 	assert.NoError(t, err)

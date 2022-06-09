@@ -10,9 +10,13 @@ The CircleCI pipeline config can be found in the file `config.yml`
 
 ```mermaid
 flowchart
-    install --> verify-go-mod & verify-git & verify-linting & verify-unit-tests & docker-lint -->|branch:main| publish
-    install -->|branch:main| verify-go-build -->|branch:main| publish
-    publish -.- cr[(Container Registry)]
+    install --> verify[Verify] -->|branch:main| publish
+    publish[Publish] -.- cr[(Container Registry)]
+
+    classDef plain fill:#ddd,stroke:#464a81,stroke-width:4px,color:#000;
+    classDef carbonaut fill:#464a81,stroke:#fff,stroke-width:4px,color:#fff;
+    class GHCarbonaut,cr,storage plain;
+    class install,publish,verify carbonaut;
 ```
 
 ## Planned pipeline configuration
@@ -30,10 +34,16 @@ The current pipeline configuration mainly implements the verification part that 
 
 ```mermaid
 flowchart
-    install --> verify --> e2eTest & api-pen-test --> StoreTestArtifacts
-    StoreTestArtifacts -->|branch:main| SignArtifacts --> PublishContainerImages --> CreateGitHubRelease
+    install[Install] --> verify[Verify] & e2eTest[End to End Test] & api-pen-test[API Security Testing] --> StoreTestArtifacts[Store Test Artifacts]
+    StoreTestArtifacts -->|branch:main| SignArtifacts[Sign Artifacts] --> PublishContainerImages[Publish Container Images] --> CreateGitHubRelease[Create GitHub Release]
     PublishContainerImages -.- cr[(Container Registry)]
-    StoreTestArtifacts -->|branch:main| GenerateReleaseNotes --> CreateGitHubRelease -.- GitHub/Carbonaut
+    StoreTestArtifacts -->|branch:main| GenerateReleaseNotes[Generate Release Notes] --> CreateGitHubRelease -.- GHCarbonaut([GitHub / Carbonaut])
     StoreTestArtifacts -.- storage[(Cloud Storage)]
-    CreateGitHubRelease --> PublishAnnouncement
+    CreateGitHubRelease --> PublishAnnouncement[Publish Announcement]
+
+    classDef plain fill:#ddd,stroke:#464a81,stroke-width:4px,color:#000;
+    classDef carbonaut fill:#464a81,stroke:#fff,stroke-width:4px,color:#fff;
+    class GHCarbonaut,cr,storage plain;
+    class install,verify,e2eTest,api-pen-test,StoreTestArtifacts,CreateGitHubRelease,GenerateReleaseNotes,PublishAnnouncement,PublishContainerImages,SignArtifacts carbonaut;
+    
 ```
