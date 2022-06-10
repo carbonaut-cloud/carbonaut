@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package context
+package ctx
 
 import (
 	"context"
@@ -21,11 +21,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
-
-func TestContextPos(t *testing.T) {
-	assert.Nil(t, Carbonaut.Get(""))
-	assert.Nil(t, Carbonaut.Get(""))
-}
 
 type CarbonautContextTestSuite struct {
 	suite.Suite
@@ -71,12 +66,13 @@ func (s *CarbonautContextTestSuite) TestCtxSet() {
 func (s *CarbonautContextTestSuite) TestCtxGet() {
 	type k string
 	var (
-		a    k = "a"
-		b      = "b"
-		info   = "info"
+		a k = "a"
+		b   = "b"
 	)
 	s.ctx.ctx = context.WithValue(s.ctx.ctx, a, b)
-	s.ctx.ctx = context.WithValue(s.ctx.ctx, LogLevel, info)
-	assert.Equal(s.T(), b, s.ctx.GetStr(a))
-	assert.Equal(s.T(), info, s.ctx.GetLogLevel())
+	v, err := s.ctx.GetStr(a)
+	assert.NoError(s.T(), err)
+	assert.Equal(s.T(), b, v)
+	_, err = s.ctx.GetStr(b)
+	assert.Error(s.T(), err)
 }

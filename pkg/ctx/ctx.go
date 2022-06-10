@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package context
+package ctx
 
-import "context"
+import (
+	"context"
+	"errors"
+)
 
 type (
 	// Info that is set by init to carbonaut; like log level, config file path, log output, ...
@@ -22,7 +25,10 @@ type (
 	carbonautCtx struct {
 		ctx context.Context
 	}
+	ErrNilValue error
 )
+
+var errNilValue ErrNilValue = errors.New("could not find a value to the key")
 
 const (
 	LogLevel       staticCtxKey = "log-level"
@@ -40,14 +46,18 @@ func (c *carbonautCtx) Set(key, val any) {
 	c.ctx = context.WithValue(c.ctx, key, val)
 }
 
-func (c *carbonautCtx) Get(key any) any {
-	return c.ctx.Value(key)
+func (c *carbonautCtx) Get(key any) (any, error) {
+	v := c.ctx.Value(key)
+	if v == nil {
+		return nil, errNilValue
+	}
+	return v, nil
 }
 
-func (c *carbonautCtx) GetStr(key any) string {
-	return c.Get(key).(string)
-}
-
-func (c *carbonautCtx) GetLogLevel() string {
-	return c.GetStr(LogLevel)
+func (c *carbonautCtx) GetStr(key any) (string, error) {
+	v, err := c.Get(key)
+	if err != nil {
+		return "", err
+	}
+	return v.(string), nil
 }
