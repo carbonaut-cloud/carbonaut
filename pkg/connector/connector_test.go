@@ -94,14 +94,6 @@ func (s *ConnectorDBTestSuite) AfterTest(_, _ string) {
 }
 
 func (s *ConnectorDBTestSuite) TestImportDataPos() {
-	getFileBytes := func(t *testing.T, filePath string) []byte {
-		in, err := os.Open(filePath)
-		assert.NoError(t, err)
-		defer in.Close()
-		data, err := ioutil.ReadAll(in)
-		assert.NoError(t, err)
-		return data
-	}
 	impInputs := []ImportIn{{
 		ProviderName: gcp.Provider.Name,
 		ImportType:   CsvRawImport,
@@ -128,9 +120,23 @@ func (s *ConnectorDBTestSuite) TestImportDataNeg() {
 		ImportType:   CsvRawImport,
 		Data:         []byte{1, 0, 1},
 		DB:           s.carbonautDB,
+	}, {
+		ProviderName: provider.Name(doesNotExist),
+		ImportType:   CsvRawImport,
+		Data:         getFileBytes(s.T(), negFilePath),
+		DB:           s.carbonautDB,
 	}}
 	for i := range impInputs {
 		err := ImportData(impInputs[i])
 		assert.Error(s.T(), err)
 	}
+}
+
+func getFileBytes(t *testing.T, filePath string) []byte {
+	in, err := os.Open(filePath)
+	assert.NoError(t, err)
+	defer in.Close()
+	d, err := ioutil.ReadAll(in)
+	assert.NoError(t, err)
+	return d
 }
