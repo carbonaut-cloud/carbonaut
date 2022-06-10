@@ -20,13 +20,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestImportCsvFileNeg(t *testing.T) {
-	c := implProvider{}
-	data, err := c.ImportCsvFile("")
-	assert.Error(t, err)
-	assert.Nil(t, data)
-}
-
 func TestImportCsvNeg(t *testing.T) {
 	c := implProvider{}
 	data, err := c.ImportCsv([]byte{})

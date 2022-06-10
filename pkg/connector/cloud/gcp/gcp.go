@@ -46,17 +46,17 @@ type Record struct {
 
 type implProvider struct{}
 
-func (p implProvider) ImportCsvFile(filepath string) ([]*models.Emissions, error) {
-	r, err := readToRecords(filepath)
-	if err != nil {
-		return nil, err
-	}
-	e, err := translateRecords(r)
-	if err != nil {
-		return nil, err
-	}
-	return e, nil
-}
+// func (p implProvider) ImportCsvFile(filepath string) ([]*models.Emissions, error) {
+// 	r, err := readToRecords(filepath)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	e, err := translateRecords(r)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return e, nil
+// }
 
 func (p implProvider) ImportCsv(data []byte) ([]*models.Emissions, error) {
 	clients := []*Record{}

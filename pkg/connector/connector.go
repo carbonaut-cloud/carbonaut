@@ -43,15 +43,15 @@ type (
 	ImportIn struct {
 		ProviderName provider.Name
 		ImportType   importType
-		FilePath     string
+		Data         []byte
 		DB           methods.ICarbonDB
 	}
 	importType string
 )
 
-const FileImport = "file"
+const CsvRawImport = "csv-raw"
 
-var SupportedImportTypes = []importType{FileImport}
+var SupportedImportTypes = []importType{CsvRawImport}
 
 func ImportData(in ImportIn) error {
 	p, err := getProvider(in.ProviderName)
@@ -59,8 +59,8 @@ func ImportData(in ImportIn) error {
 		return err
 	}
 	switch in.ImportType {
-	case FileImport:
-		e, err := p.ImportCsvFile(in.FilePath)
+	case CsvRawImport:
+		e, err := p.ImportCsv(in.Data)
 		if err != nil {
 			return err
 		}

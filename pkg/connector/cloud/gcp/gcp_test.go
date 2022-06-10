@@ -34,24 +34,24 @@ const (
 
 var negTestFiles = []string{negTestFile, negTestFile2, negTestFile3}
 
-func TestImportCsvFilePos(t *testing.T) {
-	c := implProvider{}
-	r, err := c.ImportCsvFile(testDataFile)
-	assert.NoError(t, err)
-	assert.Len(t, r, testDataFileLength)
-}
+// func TestImportCsvFilePos(t *testing.T) {
+// 	c := implProvider{}
+// 	r, err := c.ImportCsvFile(testDataFile)
+// 	assert.NoError(t, err)
+// 	assert.Len(t, r, testDataFileLength)
+// }
 
-func TestImportCsvFileNeg(t *testing.T) {
-	c := implProvider{}
-	for i := range negTestFiles {
-		r, err := c.ImportCsvFile(negTestFiles[i])
-		assert.Error(t, err)
-		assert.Nil(t, r)
-	}
-	r, err := c.ImportCsvFile(doesNotExistTestdata)
-	assert.Error(t, err)
-	assert.Nil(t, r)
-}
+// func TestImportCsvFileNeg(t *testing.T) {
+// 	c := implProvider{}
+// 	for i := range negTestFiles {
+// 		r, err := c.ImportCsvFile(negTestFiles[i])
+// 		assert.Error(t, err)
+// 		assert.Nil(t, r)
+// 	}
+// 	r, err := c.ImportCsvFile(doesNotExistTestdata)
+// 	assert.Error(t, err)
+// 	assert.Nil(t, r)
+// }
 
 func TestImportCsvPos(t *testing.T) {
 	in, err := os.Open(testDataFile)

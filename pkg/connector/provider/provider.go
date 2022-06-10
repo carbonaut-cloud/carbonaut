@@ -30,7 +30,6 @@ type Config struct {
 }
 
 type CloudProvider interface {
-	ImportCsvFile(filepath string) ([]*models.Emissions, error)
 	ImportCsv(data []byte) ([]*models.Emissions, error)
 	ExportAllToCsv() ([]byte, error)
 	PullData() ([]byte, error)

@@ -32,10 +32,6 @@ type Record struct{}
 
 type implProvider struct{}
 
-func (p implProvider) ImportCsvFile(filepath string) ([]*models.Emissions, error) {
-	return nil, fmt.Errorf("not implemented yet")
-}
-
 func (p implProvider) ImportCsv(data []byte) ([]*models.Emissions, error) {
 	return nil, fmt.Errorf("not implemented yet")
 }
