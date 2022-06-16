@@ -16,29 +16,15 @@ package main
 
 import (
 	"carbonaut.cloud/carbonaut/pkg/api"
-	"carbonaut.cloud/carbonaut/pkg/config"
 	"carbonaut.cloud/carbonaut/pkg/util"
-	"github.com/mcuadros/go-defaults"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/pflag"
 )
-
-var cfg = config.GetCarbonautConfigIn{}
 
 func main() {
 	l := util.GetLogger(&util.LogConfig{})
 	l.Info().Msg("Applying defaults to the configuration to look up the carbonaut config file")
-	defaults.SetDefaults(&cfg)
-	pflag.StringVarP(&cfg.FilePath, "config", "c", "", "Specify where to find the configuration file")
-	if cfg.FilePath != "" {
-		cfg.ConfigMedium = config.FileConfigMedium
-	}
-	c, err := config.GetCarbonautConfig(&cfg)
-	if err != nil {
-		log.Fatal().Err(err)
-	}
 	a := api.CarbonautAPI{}
-	if err := a.Start(&c.API); err != nil {
+	if err := a.Start(&api.Config{}); err != nil {
 		log.Fatal().Err(err)
 	}
 }

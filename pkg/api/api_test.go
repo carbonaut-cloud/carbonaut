@@ -41,13 +41,7 @@ func TestStartPos(t *testing.T) {
 	assert.NoError(t, err, "could not find a free port")
 	port2, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
-	posCfg := []Config{{
-		Version: "v1",
-		Port:    port1,
-	}, {
-		Version: "v1",
-		Port:    port2,
-	}}
+	posCfg := []Config{{Port: port1}, {Port: port2}}
 	for _, c := range posCfg {
 		go func(c Config) {
 			api := CarbonautAPI{}
@@ -60,7 +54,7 @@ func TestStartPos(t *testing.T) {
 		}(c)
 		time.Sleep(time.Millisecond * 50)
 		routeStructure := map[string]string{
-			fmt.Sprintf("api/%s/status", c.Version): statusOK,
+			fmt.Sprintf("api/%s/status", Version): statusOK,
 		}
 
 		for route, expectedResponse := range routeStructure {
@@ -72,10 +66,7 @@ func TestStartPos(t *testing.T) {
 func TestStart404Pos(t *testing.T) {
 	port, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
-	c := Config{
-		Version: "v1",
-		Port:    port,
-	}
+	c := Config{Port: port}
 	go func(c Config) {
 		api := CarbonautAPI{}
 		err := api.Start(&c)
@@ -91,10 +82,7 @@ func TestStart404Pos(t *testing.T) {
 func TestStartPortBlockedNeg(t *testing.T) {
 	port, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
-	c := Config{
-		Version: "v1",
-		Port:    port,
-	}
+	c := Config{Port: port}
 	// first one does not throw an error
 	go func(c Config) {
 		api := CarbonautAPI{}
@@ -115,10 +103,7 @@ func TestStartPortBlockedNeg(t *testing.T) {
 func TestStartGracefullyShutdownPos(t *testing.T) {
 	port, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
-	c := Config{
-		Version: "v1",
-		Port:    port,
-	}
+	c := Config{Port: port}
 	api := CarbonautAPI{}
 	// first one does not throw an error
 	go func(c Config) {
@@ -134,13 +119,7 @@ func TestStartGracefullyShutdownPos(t *testing.T) {
 func TestStartNeg(t *testing.T) {
 	port, err := freeport.GetFreePort()
 	assert.NoError(t, err, "could not find a free port")
-	posCfg := []Config{{}, {
-		Version: "v-1",
-		Port:    port,
-	}, {
-		Version: "v1",
-		Port:    -1,
-	}}
+	posCfg := []Config{{}, {Port: port}, {Port: -1}}
 	for _, c := range posCfg {
 		go func(c Config) {
 			api := CarbonautAPI{}

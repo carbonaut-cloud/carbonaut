@@ -24,19 +24,20 @@ import (
 	"carbonaut.cloud/carbonaut/docs"
 	"carbonaut.cloud/carbonaut/pkg/api/methods"
 	"carbonaut.cloud/carbonaut/pkg/api/routes"
-	"carbonaut.cloud/carbonaut/pkg/api/v1/config"
-	"carbonaut.cloud/carbonaut/pkg/api/v1/connector"
-	"carbonaut.cloud/carbonaut/pkg/api/v1/data"
+	"carbonaut.cloud/carbonaut/pkg/api/routes/config"
+	"carbonaut.cloud/carbonaut/pkg/api/routes/connector"
+	"carbonaut.cloud/carbonaut/pkg/api/routes/data"
 	"carbonaut.cloud/carbonaut/pkg/util"
 	swagger "github.com/arsmn/fiber-swagger/v2"
+	"github.com/caarlos0/env"
 	"github.com/gofiber/fiber/v2"
+	"github.com/mcuadros/go-defaults"
 )
 
 // Config sets configuration file information that gets read by the pkg/config package
 // To set values in the configuration file use the path 'api.version'.
 type Config struct {
-	Version string `default:"v1" validate:"regexp=^v1$"`
-	Port    int    `default:"3000"`
+	Port int `default:"3000" env:"API_PORT"`
 }
 
 // all r in sub packages
@@ -50,6 +51,8 @@ type CarbonautAPI struct {
 	app *fiber.App
 }
 
+const Version = "v0.0.1"
+
 // @title Carbonaut API
 // @version 0.0.1
 // @description This API is used to interact with Carbonaut resources
@@ -58,12 +61,16 @@ type CarbonautAPI struct {
 func (a *CarbonautAPI) Start(c *Config) error {
 	log := util.Log
 	log.Info().Msg("Start Carbonaut API")
+	if err := env.Parse(c); err != nil {
+		return fmt.Errorf("could not get environment variables %v", err)
+	}
+	defaults.SetDefaults(c)
 	app := fiber.New()
 	a.app = app
-	v := app.Group(fmt.Sprintf("/api/%s", c.Version))
+	v := app.Group(fmt.Sprintf("/api/%s", Version))
 
 	// Add swagger information
-	docs.SwaggerInfo.Version = c.Version
+	docs.SwaggerInfo.Version = Version
 
 	addBasePathRoutes(v)
 	// Add routes to the API Server
@@ -72,7 +79,7 @@ func (a *CarbonautAPI) Start(c *Config) error {
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	})
-	log.Info().Msgf("Swagger endpoint: http://127.0.0.1:%d/api/%s/swagger/index.html", c.Port, c.Version)
+	log.Info().Msgf("Swagger endpoint: http://127.0.0.1:%d/api/%s/swagger/index.html", c.Port, Version)
 	if err := app.Listen(fmt.Sprintf(":%d", c.Port)); err != nil {
 		return err
 	}

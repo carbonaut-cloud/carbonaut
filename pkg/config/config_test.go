@@ -16,115 +16,93 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
+	"github.com/mcuadros/go-defaults"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
-	TestFolder                = "test"
-	PosFolder                 = "pos"
-	NegFolder                 = "neg"
-	YAML                      = "yaml"
-	GenericDoesNotExistString = "does-not-exist"
+	folderPath  = "../../test/data/config"
+	NotExistent = "does-not-exist"
+	ConfigPath  = "CONFIG_FILE_PATH"
 )
 
 var (
-	NegFolderPath = fmt.Sprintf("%s/%s", TestFolder, NegFolder)
-	NegConfigs    = []GetCarbonautConfigIn{
-		{ConfigMedium: configProvider(GenericDoesNotExistString), FilePath: ""},
-		{ConfigMedium: FileConfigMedium, FilePath: fmt.Sprintf("%s/%s.%s", GenericDoesNotExistString, GenericDoesNotExistString, YAML)},
-		{ConfigMedium: FileConfigMedium, FilePath: fmt.Sprintf("%s/%s.%s", NegFolderPath, "minimal", GenericDoesNotExistString)},
-		{ConfigMedium: FileConfigMedium, FilePath: fmt.Sprintf("%s/%s", NegFolderPath, GenericDoesNotExistString)},
+	NegConfigs = []map[string]string{
+		{ConfigPath: fmt.Sprintf("%s/neg/%s", folderPath, "neg-no-yaml-3.yml")},
+		{ConfigPath: fmt.Sprintf("%s/neg/%s", folderPath, "pos-empty.yml")},
 	}
-	PosFolderPath = fmt.Sprintf("%s/%s", TestFolder, PosFolder)
-	PosConfigs    = []GetCarbonautConfigIn{
-		{ConfigMedium: DefaultConfigMedium},
+	PosConfigs = []map[string]string{
+		{ConfigPath: fmt.Sprintf("%s/pos/%s", folderPath, "pos-empty.yml")},
+		{ConfigPath: fmt.Sprintf("%s/pos/%s", folderPath, "pos-minimal.yml")},
 	}
 )
 
-func TestGetCarbonautConfigNeg(t *testing.T) {
+// check if test files are available
+func TestCheckTestData(t *testing.T) {
+	f, err := os.Stat(folderPath)
+	assert.NoError(t, err)
+	assert.Equal(t, "config", f.Name())
+}
+
+func TestReadFileNeg(t *testing.T) {
 	for i := range NegConfigs {
-		cfg, err := GetCarbonautConfig(&NegConfigs[i])
+		t.Log(NegConfigs[i][ConfigPath])
+		// configure environment variables
+		configPathEnvBefore := os.Getenv(ConfigPath)
+		assert.NoError(t, os.Setenv(ConfigPath, NegConfigs[i][ConfigPath]))
+		// run test
+		cfg, err := ReadFile()
 		assert.Error(t, err)
 		assert.Nil(t, cfg)
+		// clean up
+		assert.NoError(t, os.Setenv(ConfigPath, configPathEnvBefore))
 	}
 }
 
-func TestGetCarbonautConfigPos(t *testing.T) {
+func TestReadFilePos(t *testing.T) {
 	for i := range PosConfigs {
-		cfg, err := GetCarbonautConfig(&PosConfigs[i])
+		t.Log(PosConfigs[i][ConfigPath])
+		// configure environment variables
+		configPathEnvBefore := os.Getenv(ConfigPath)
+		assert.NoError(t, os.Setenv(ConfigPath, PosConfigs[i][ConfigPath]))
+		// run test
+		cfg, err := ReadFile()
 		assert.NoError(t, err)
 		assert.NotNil(t, cfg)
+		// clean up
+		assert.NoError(t, os.Setenv(ConfigPath, configPathEnvBefore))
 	}
 }
 
-func TestGetCarbonautConfigNegFile(t *testing.T) {
-	folderPath := fmt.Sprintf("%s/%s", TestFolder, NegFolder)
-	files, err := ioutil.ReadDir(folderPath)
+func TestWriteFilePos(t *testing.T) {
+	c := CarbonConfig{}
+	defaults.SetDefaults(&c)
+	err := WriteFile(&WriteFileIn{
+		ConfigFilePath: "./tmp.yml",
+		Config:         c,
+		AutoCreate:     true,
+	})
 	assert.NoError(t, err)
-	for _, f := range files {
-		cfg, err := GetCarbonautConfig(&GetCarbonautConfigIn{
-			ConfigMedium: FileConfigMedium,
-			FilePath:     fmt.Sprintf("%s/%s.%s", folderPath, f.Name(), YAML),
-		})
-		assert.Error(t, err, fmt.Sprintf("expect an error for test file %s/%s", folderPath, f.Name()))
-		assert.Nil(t, cfg)
-	}
+	assert.NoError(t, os.Remove("./tmp.yml"), "removing/ cleaning up the generated test file should not error^")
 }
 
-func TestGetCarbonautConfigPosFile(t *testing.T) {
-	folderPath := fmt.Sprintf("%s/%s", TestFolder, PosFolder)
-	files, err := ioutil.ReadDir(folderPath)
-	assert.NoError(t, err)
-	for _, f := range files {
-		cfg, err := GetCarbonautConfig(&GetCarbonautConfigIn{
-			ConfigMedium: FileConfigMedium,
-			FilePath:     fmt.Sprintf("%s/%s.%s", folderPath, f.Name(), YAML),
-		})
-		assert.NoError(t, err, fmt.Sprintf("no error expected for for test file %s/%s", folderPath, f.Name()))
-		assert.NotNil(t, cfg)
-	}
-}
-
-func TestSplitFilePathToConfigPos(t *testing.T) {
-	testMap := map[string]fileConfig{
-		"./my": {
-			FileName: "",
-			FileType: "/my",
-			FilePath: "",
-		},
-		"./my.db": {
-			FileName: "my",
-			FileType: "db",
-			FilePath: ".",
-		},
-		"./my/my.db": {
-			FileName: "my",
-			FileType: "db",
-			FilePath: "./my",
-		},
-		"./my/..my.myTale324": {
-			FileName: "..my",
-			FileType: "myTale324",
-			FilePath: "./my",
-		},
-	}
-	for inputString, expectedOutStruct := range testMap {
-		cfg, err := splitFilePathToPieces(inputString)
-		assert.NoError(t, err)
-		assert.Equal(t, cfg.FileName, expectedOutStruct.FileName)
-		assert.Equal(t, cfg.FilePath, expectedOutStruct.FilePath)
-		assert.Equal(t, cfg.FileType, expectedOutStruct.FileType)
-	}
-}
-
-func TestSplitFilePathToConfigNeg(t *testing.T) {
-	testMap := []string{"my", "my/dw"}
-	for _, inputString := range testMap {
-		cfg, err := splitFilePathToPieces(inputString)
+func TestWriteFileNeg(t *testing.T) {
+	c := CarbonConfig{}
+	defaults.SetDefaults(&c)
+	configs := []WriteFileIn{{
+		ConfigFilePath: "./tmp.yml",
+		Config:         c,
+		AutoCreate:     false,
+	}, {
+		ConfigFilePath: "/usr/tmp.yml",
+		Config:         c,
+		AutoCreate:     true,
+	}}
+	for i := range configs {
+		err := WriteFile(&configs[i])
 		assert.Error(t, err)
-		assert.Nil(t, cfg)
 	}
 }

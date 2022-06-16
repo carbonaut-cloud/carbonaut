@@ -56,4 +56,4 @@ install:
 	go get ./...
 
 swag:
-	swag init --dir "./pkg/api/,./pkg/api/v1/data"
+	swag init --dir "./pkg/api/"

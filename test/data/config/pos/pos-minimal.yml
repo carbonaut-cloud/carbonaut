@@ -1,0 +1,6 @@
+loglevel: warning
+Data:
+  Storage:
+    ProviderName: sqlite
+    SqliteConfig:
+      FileName: ./test/data/storage/pos/empty.db

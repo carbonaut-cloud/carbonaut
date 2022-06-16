@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/caarlos0/env"
+	"github.com/go-playground/validator/v10"
 	"github.com/mcuadros/go-defaults"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -27,7 +29,7 @@ var Log = GetLogger(&LogConfig{})
 
 type LogConfig struct {
 	LoggerOutputFormatting loggerFormats `default:"console"`
-	LogLevel               string        `default:"debug"`
+	LogLevel               string        `env:"LOG_LEVEL" default:"info" validate:"oneof='info' 'debug' 'error' 'fatal' 'warning'"`
 }
 
 type loggerFormats string
@@ -46,7 +48,13 @@ func GetLogger(in *LogConfig) *zerolog.Logger {
 }
 
 func getLogger(in *LogConfig) (*zerolog.Logger, error) {
+	if err := env.Parse(in); err != nil {
+		return nil, fmt.Errorf("could not get environment variables %v", err)
+	}
 	defaults.SetDefaults(in)
+	if err := validator.New().Struct(in); err != nil {
+		return nil, fmt.Errorf("invalid configuration, %v", err)
+	}
 	logLevel, err := zerolog.ParseLevel(in.LogLevel)
 	if err != nil {
 		return nil, err

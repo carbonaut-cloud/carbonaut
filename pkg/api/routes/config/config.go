@@ -15,8 +15,12 @@
 package config
 
 import (
+	"fmt"
+
 	"carbonaut.cloud/carbonaut/pkg/api/routes"
+	"carbonaut.cloud/carbonaut/pkg/config"
 	"github.com/gofiber/fiber/v2"
+	"gopkg.in/yaml.v2"
 )
 
 type Routes struct{}
@@ -40,8 +44,19 @@ func (c Routes) AddRoutes(r fiber.Router) {
 // @Tags config
 // @Router /api/v1/config/validate [post]
 func validateHandler(c *fiber.Ctx) error {
-	// TODO: not implemented
-	return c.SendString("wip, not implemented")
+	b := c.Body()
+	if b == nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": fmt.Errorf("no carbonaut configuration file provided")})
+	}
+	carbonConfig := config.CarbonConfig{}
+	if err := yaml.Unmarshal(b, &carbonConfig); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": fmt.Errorf("unable to decode into struct, %v", err)})
+	}
+	if err := config.VerifyConfig(&carbonConfig); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
+	}
+	c.Status(fiber.StatusOK)
+	return c.SendString("valid configuration file")
 }
 
 // @description WIP, describe current carbonaut configuration

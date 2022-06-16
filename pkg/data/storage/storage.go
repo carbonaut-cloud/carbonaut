@@ -23,7 +23,8 @@ import (
 )
 
 type Config struct {
-	ProviderName   string `default:"sqlite" validate:"regexp=^sqlite|postgres$"`
+	//  validate:"oneof='sqlite' 'postgres'"
+	ProviderName   string `default:"sqlite"`
 	PostgresConfig postgres.Config
 	SqliteConfig   sqlite.Config
 }
